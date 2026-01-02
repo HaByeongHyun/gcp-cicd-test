@@ -60,7 +60,7 @@ export default function ContactUsPage() {
         <div className="mx-auto max-w-4xl text-center">
           <h1 className="mb-6 text-5xl font-bold">Contact Us</h1>
           <p className="text-muted-foreground text-xl">
-            Have a question or want to work together? We'd love to hear from
+            Have a question or want to work together? We&apos;d love to hear from
             you.
           </p>
         </div>
@@ -75,7 +75,7 @@ export default function ContactUsPage() {
               <CardHeader>
                 <CardTitle>Send us a message</CardTitle>
                 <CardDescription>
-                  Fill out the form below and we'll get back to you as soon as
+                  Fill out the form below and we&apos;ll get back to you as soon as
                   possible.
                 </CardDescription>
               </CardHeader>
