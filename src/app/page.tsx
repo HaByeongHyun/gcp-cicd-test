@@ -73,7 +73,7 @@ export default function Home() {
               <CardHeader>
                 <CardTitle>24/7 Support</CardTitle>
                 <CardDescription>
-                  We're here whenever you need us
+                  We&apos;re here whenever you need us
                 </CardDescription>
               </CardHeader>
               <CardContent>
