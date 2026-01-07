@@ -237,7 +237,11 @@ function PerformanceFilters() {
   const areaOptions = useMemo(
     () =>
       AREA_OPTIONS.map((option) => (
-        <SelectItem key={option.value} value={option.value}>
+        <SelectItem
+          key={option.value}
+          value={option.value}
+          className="cursor-pointer"
+        >
           {option.label}
         </SelectItem>
       )),
@@ -247,7 +251,11 @@ function PerformanceFilters() {
   const genreOptions = useMemo(
     () =>
       GENRE_OPTIONS.map((option) => (
-        <SelectItem key={option.value} value={option.value}>
+        <SelectItem
+          key={option.value}
+          value={option.value}
+          className="cursor-pointer"
+        >
           {option.label}
         </SelectItem>
       )),
@@ -257,11 +265,39 @@ function PerformanceFilters() {
   // 선택된 필터 개수 계산
   const activeFilterCount = useMemo(() => {
     let count = 0;
+
+    // 시작일이 기본값과 다른 경우
+    const defaultStartDate = getDefaultStartDate();
+    if (
+      startDate &&
+      formatDateToString(startDate) !== formatDateToString(defaultStartDate)
+    ) {
+      count++;
+    }
+
+    // 종료일이 기본값과 다른 경우
+    const defaultEndDate = getDefaultEndDate();
+    if (
+      endDate &&
+      formatDateToString(endDate) !== formatDateToString(defaultEndDate)
+    ) {
+      count++;
+    }
+
     if (area) count++;
     if (genre) count++;
     if (searchQuery.trim()) count++;
     return count;
-  }, [area, genre, searchQuery]);
+  }, [
+    startDate,
+    endDate,
+    area,
+    genre,
+    searchQuery,
+    getDefaultStartDate,
+    getDefaultEndDate,
+    formatDateToString,
+  ]);
 
   return (
     <div
@@ -359,7 +395,7 @@ function PerformanceFilters() {
                   value={area}
                   onValueChange={(value) => setArea(value || undefined)}
                 >
-                  <SelectTrigger className="w-full">
+                  <SelectTrigger className="w-full cursor-pointer">
                     <SelectValue placeholder="전체 지역" />
                   </SelectTrigger>
                   <SelectContent>{areaOptions}</SelectContent>
@@ -375,7 +411,7 @@ function PerformanceFilters() {
                   value={genre}
                   onValueChange={(value) => setGenre(value || undefined)}
                 >
-                  <SelectTrigger className="w-full">
+                  <SelectTrigger className="w-full cursor-pointer">
                     <SelectValue placeholder="전체 장르" />
                   </SelectTrigger>
                   <SelectContent>{genreOptions}</SelectContent>

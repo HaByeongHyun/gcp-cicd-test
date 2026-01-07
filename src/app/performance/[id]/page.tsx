@@ -4,6 +4,7 @@ import type {
   PerformanceDetail,
   PerformanceDetailApiResponse,
 } from "@/types/performance";
+import DOMPurify from "isomorphic-dompurify";
 import { ChevronLeft } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -14,6 +15,17 @@ import { IntroImage, PerformanceImage } from "./PerformanceImage";
 const API_URL = process.env.NEXT_PUBLIC_PERFORMANCE_API_URL;
 const API_KEY = process.env.NEXT_PUBLIC_PERFORMANCE_API_KEY;
 
+// URL 검증 함수 (보안: javascript:, data: 등 악의적인 URL 차단)
+function isValidUrl(url: string): boolean {
+  try {
+    const parsedUrl = new URL(url);
+    // http, https만 허용
+    return parsedUrl.protocol === "http:" || parsedUrl.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
 async function getPerformanceDetail(id: string): Promise<PerformanceDetail> {
   // 환경 변수 검증
   if (!API_URL || !API_KEY) {
@@ -23,7 +35,7 @@ async function getPerformanceDetail(id: string): Promise<PerformanceDetail> {
   }
 
   // ID 파라미터 검증 (영문자와 숫자만 허용)
-  if (!/^[A-Za-z0-9]+$/.test(id)) {
+  if (!/^[A-Za-z0-9]{1,50}$/.test(id)) {
     throw new Error("올바르지 않은 공연 ID입니다.");
   }
 
@@ -39,16 +51,25 @@ async function getPerformanceDetail(id: string): Promise<PerformanceDetail> {
   const xmlData = await res.text();
 
   // XML을 JSON으로 변환
-  const jsonData: PerformanceDetailApiResponse = await parseStringPromise(
-    xmlData,
-    {
+  let jsonData: PerformanceDetailApiResponse;
+  try {
+    jsonData = await parseStringPromise(xmlData, {
       explicitArray: false,
       trim: true,
       normalize: true,
       normalizeTags: false,
       mergeAttrs: true,
-    },
-  );
+    });
+  } catch (error) {
+    throw new Error(
+      `공연 정보를 파싱하는데 실패했습니다: ${error instanceof Error ? error.message : "알 수 없는 오류"}`,
+    );
+  }
+
+  // API 응답 구조 검증
+  if (!jsonData?.dbs?.db) {
+    throw new Error("공연 정보가 올바르지 않은 형식입니다.");
+  }
 
   return jsonData.dbs.db;
 }
@@ -97,11 +118,14 @@ export default async function PerformanceDetailPage({
   const { id } = await params;
   const performance = await getPerformanceDetail(id);
 
-  const relateInfo = performance.relates?.relate
-    ? Array.isArray(performance.relates.relate)
-      ? performance.relates.relate
-      : [performance.relates.relate]
-    : [];
+  // 예약 링크 배열 처리 및 URL 검증 (보안)
+  const relateInfo = (
+    performance.relates?.relate
+      ? Array.isArray(performance.relates.relate)
+        ? performance.relates.relate
+        : [performance.relates.relate]
+      : []
+  ).filter(({ relateurl }) => isValidUrl(relateurl));
 
   // 소개이미지 배열 처리
   const introImages = performance.styurls?.styurl
@@ -263,7 +287,10 @@ export default async function PerformanceDetailPage({
               </CardHeader>
               <CardContent>
                 <p className="leading-relaxed whitespace-pre-wrap text-gray-700">
-                  {performance.sty.trim() || "-"}
+                  {DOMPurify.sanitize(performance.sty.trim() || "-", {
+                    ALLOWED_TAGS: [],
+                    ALLOWED_ATTR: [],
+                  })}
                 </p>
               </CardContent>
             </Card>
