@@ -15,7 +15,26 @@ const API_URL = process.env.NEXT_PUBLIC_PERFORMANCE_API_URL;
 const API_KEY = process.env.NEXT_PUBLIC_PERFORMANCE_API_KEY;
 
 async function getPerformanceDetail(id: string): Promise<PerformanceDetail> {
+  // 환경 변수 검증
+  if (!API_URL || !API_KEY) {
+    throw new Error(
+      "공연 API 설정이 올바르지 않습니다. 환경 변수를 확인해주세요.",
+    );
+  }
+
+  // ID 파라미터 검증 (영문자와 숫자만 허용)
+  if (!/^[A-Za-z0-9]+$/.test(id)) {
+    throw new Error("올바르지 않은 공연 ID입니다.");
+  }
+
   const res = await fetch(`${API_URL}/pblprfr/${id}?service=${API_KEY}`);
+
+  // API 요청 에러 처리
+  if (!res.ok) {
+    throw new Error(
+      `공연 상세 정보를 불러오는데 실패했습니다. (상태 코드: ${res.status})`,
+    );
+  }
 
   const xmlData = await res.text();
 
@@ -83,8 +102,6 @@ export default async function PerformanceDetailPage({
       ? performance.relates.relate
       : [performance.relates.relate]
     : [];
-
-  console.log(relateInfo);
 
   // 소개이미지 배열 처리
   const introImages = performance.styurls?.styurl

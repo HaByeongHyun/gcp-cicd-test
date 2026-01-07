@@ -20,23 +20,34 @@ export const PerformanceImage = memo(({
   sizes = "(max-width: 1024px) 100vw, 33vw",
 }: PerformanceImageProps) => {
   const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
 
   return (
     <div className="relative h-full w-full">
-      {isLoading && (
+      {isLoading && !hasError && (
         <Skeleton className="absolute inset-0 h-full w-full" />
       )}
-      <Image
-        src={src}
-        alt={alt}
-        fill
-        sizes={sizes}
-        className={`object-cover transition-opacity duration-300 ${
-          isLoading ? "opacity-0" : "opacity-100"
-        } ${className}`}
-        priority={priority}
-        onLoad={() => setIsLoading(false)}
-      />
+      {hasError ? (
+        <div className="flex h-full items-center justify-center bg-gray-100">
+          <span className="text-gray-400">이미지를 불러올 수 없습니다</span>
+        </div>
+      ) : (
+        <Image
+          src={src}
+          alt={alt}
+          fill
+          sizes={sizes}
+          className={`object-cover transition-opacity duration-300 ${
+            isLoading ? "opacity-0" : "opacity-100"
+          } ${className}`}
+          priority={priority}
+          onLoad={() => setIsLoading(false)}
+          onError={() => {
+            setIsLoading(false);
+            setHasError(true);
+          }}
+        />
+      )}
     </div>
   );
 });
@@ -52,23 +63,34 @@ interface IntroImageProps {
 
 export const IntroImage = memo(({ src, alt, width = 0, height = 0 }: IntroImageProps) => {
   const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
 
   return (
     <div className="relative overflow-hidden rounded-lg">
-      {isLoading && (
+      {isLoading && !hasError && (
         <Skeleton className="aspect-video w-full" />
       )}
-      <Image
-        src={src}
-        alt={alt}
-        width={width}
-        height={height}
-        sizes="100vw"
-        className={`h-auto w-full transition-opacity duration-300 ${
-          isLoading ? "opacity-0" : "opacity-100"
-        }`}
-        onLoad={() => setIsLoading(false)}
-      />
+      {hasError ? (
+        <div className="flex aspect-video w-full items-center justify-center bg-gray-100">
+          <span className="text-gray-400">이미지를 불러올 수 없습니다</span>
+        </div>
+      ) : (
+        <Image
+          src={src}
+          alt={alt}
+          width={width}
+          height={height}
+          sizes="100vw"
+          className={`h-auto w-full transition-opacity duration-300 ${
+            isLoading ? "opacity-0" : "opacity-100"
+          }`}
+          onLoad={() => setIsLoading(false)}
+          onError={() => {
+            setIsLoading(false);
+            setHasError(true);
+          }}
+        />
+      )}
     </div>
   );
 });
