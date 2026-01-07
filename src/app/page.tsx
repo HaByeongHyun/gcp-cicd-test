@@ -167,7 +167,21 @@ const PerformanceCard = memo(
 PerformanceCard.displayName = "PerformanceCard";
 
 const PerformancePagination = memo(
-  ({ page, hasNextPage }: { page: number; hasNextPage: boolean }) => {
+  ({
+    page,
+    hasNextPage,
+    searchParams,
+  }: {
+    page: number;
+    hasNextPage: boolean;
+    searchParams: Record<string, string>;
+  }) => {
+    const createPageUrl = (pageNum: number) => {
+      const params = new URLSearchParams(searchParams);
+      params.set("page", pageNum.toString());
+      return `?${params.toString()}`;
+    };
+
     return (
       <div className="flex w-full justify-center">
         <Pagination>
@@ -175,7 +189,7 @@ const PerformancePagination = memo(
             {/* 처음으로 버튼 */}
             {page > 1 && (
               <PaginationItem>
-                <PaginationLink href="?page=1" size="default">
+                <PaginationLink href={createPageUrl(1)} size="default">
                   처음으로
                 </PaginationLink>
               </PaginationItem>
@@ -184,7 +198,7 @@ const PerformancePagination = memo(
             {/* 이전 페이지 버튼 */}
             <PaginationItem>
               <PaginationPrevious
-                href={page > 1 ? `?page=${page - 1}` : "#"}
+                href={page > 1 ? createPageUrl(page - 1) : "#"}
                 aria-disabled={page <= 1}
                 className={page <= 1 ? "pointer-events-none opacity-50" : ""}
               />
@@ -193,7 +207,7 @@ const PerformancePagination = memo(
             {/* 다음 페이지 버튼 */}
             <PaginationItem>
               <PaginationNext
-                href={hasNextPage ? `?page=${page + 1}` : "#"}
+                href={hasNextPage ? createPageUrl(page + 1) : "#"}
                 aria-disabled={!hasNextPage}
                 className={!hasNextPage ? "pointer-events-none opacity-50" : ""}
               />
@@ -215,6 +229,7 @@ async function PerformanceList({
   area,
   genre,
   search,
+  searchParams,
 }: {
   page: number;
   perPage: number;
@@ -223,6 +238,7 @@ async function PerformanceList({
   area?: string;
   genre?: string;
   search?: string;
+  searchParams: Record<string, string>;
 }) {
   const params = new URLSearchParams({
     service: API_KEY || "",
@@ -293,7 +309,11 @@ async function PerformanceList({
         ))}
       </div>
       {performances.length > 0 && (
-        <PerformancePagination page={page} hasNextPage={hasNextPage} />
+        <PerformancePagination
+          page={page}
+          hasNextPage={hasNextPage}
+          searchParams={searchParams}
+        />
       )}
     </div>
   );
@@ -324,6 +344,16 @@ export default async function Home({
   const area = params.area;
   const genre = params.genre;
   const search = params.search;
+
+  // searchParams 객체 생성 (undefined 값 제외)
+  const currentSearchParams: Record<string, string> = {};
+  if (params.page) currentSearchParams.page = params.page;
+  if (params.perPage) currentSearchParams.perPage = params.perPage;
+  if (params.stdate) currentSearchParams.stdate = params.stdate;
+  if (params.eddate) currentSearchParams.eddate = params.eddate;
+  if (params.area) currentSearchParams.area = params.area;
+  if (params.genre) currentSearchParams.genre = params.genre;
+  if (params.search) currentSearchParams.search = params.search;
 
   return (
     <div className="flex min-h-screen flex-col bg-gray-50">
@@ -397,6 +427,7 @@ export default async function Home({
               area={area}
               genre={genre}
               search={search}
+              searchParams={currentSearchParams}
             />
           </Suspense>
         </div>
