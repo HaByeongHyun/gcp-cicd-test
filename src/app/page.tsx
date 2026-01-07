@@ -240,81 +240,121 @@ async function PerformanceList({
   search?: string;
   searchParams: Record<string, string>;
 }) {
-  const params = new URLSearchParams({
-    service: API_KEY || "",
-    stdate,
-    eddate,
-    cpage: page.toString(),
-    rows: perPage.toString(),
-    prfstate: "02",
-  });
+  try {
+    // 환경변수 검증
+    if (!API_URL || !API_KEY) {
+      throw new Error("API 설정이 올바르지 않습니다.");
+    }
 
-  if (area) {
-    params.append("signgucode", area);
-  }
+    const params = new URLSearchParams({
+      service: API_KEY,
+      stdate,
+      eddate,
+      cpage: page.toString(),
+      rows: perPage.toString(),
+      prfstate: "02",
+    });
 
-  if (genre) {
-    params.append("shcate", genre);
-  }
+    if (area) {
+      params.append("signgucode", area);
+    }
 
-  if (search) {
-    params.append("shprfnm", search);
-  }
+    if (genre) {
+      params.append("shcate", genre);
+    }
 
-  const apiUrl = `${API_URL}/pblprfr?${params.toString()}`;
+    if (search) {
+      params.append("shprfnm", search);
+    }
 
-  const res = await fetch(apiUrl);
+    const apiUrl = `${API_URL}/pblprfr?${params.toString()}`;
 
-  const xmlData = await res.text();
+    const res = await fetch(apiUrl, {
+      cache: "no-store",
+    });
 
-  // XML을 JSON으로 변환
-  const jsonData: PerformanceApiResponse = await parseStringPromise(xmlData, {
-    explicitArray: false, // 단일 요소를 배열로 감싸지 않음
-    trim: true, // 공백 제거
-    normalize: true, // 공백 정규화
-    normalizeTags: false, // 태그명 소문자 변환 안함
-    mergeAttrs: true, // 속성을 자식 요소로 병합
-  });
+    if (!res.ok) {
+      throw new Error(`API 요청 실패: ${res.status} ${res.statusText}`);
+    }
 
-  // db가 단일 객체인 경우 배열로 변환
-  const performances = Array.isArray(jsonData.dbs.db)
-    ? jsonData.dbs.db
-    : jsonData.dbs.db
-      ? [jsonData.dbs.db]
-      : [];
+    const xmlData = await res.text();
 
-  // 마지막 페이지 체크 (다음 페이지 버튼 표시 여부)
-  const hasNextPage = performances.length === perPage;
+    // XML을 JSON으로 변환
+    const jsonData: PerformanceApiResponse = await parseStringPromise(xmlData, {
+      explicitArray: false, // 단일 요소를 배열로 감싸지 않음
+      trim: true, // 공백 제거
+      normalize: true, // 공백 정규화
+      normalizeTags: false, // 태그명 소문자 변환 안함
+      mergeAttrs: true, // 속성을 자식 요소로 병합
+    });
 
-  if (performances.length === 0) {
+    // API 응답 구조 검증
+    if (!jsonData?.dbs) {
+      throw new Error("API 응답 형식이 올바르지 않습니다.");
+    }
+
+    // db가 단일 객체인 경우 배열로 변환
+    const performances = Array.isArray(jsonData.dbs.db)
+      ? jsonData.dbs.db
+      : jsonData.dbs.db
+        ? [jsonData.dbs.db]
+        : [];
+
+    // 마지막 페이지 체크 (다음 페이지 버튼 표시 여부)
+    const hasNextPage = performances.length === perPage;
+
+    if (performances.length === 0) {
+      return (
+        <div className="flex min-h-100 flex-col items-center justify-center space-y-4">
+          <div className="text-center">
+            <h3 className="mb-2 text-xl font-semibold text-gray-900">
+              검색 결과가 없습니다
+            </h3>
+            <p className="text-gray-600">
+              다른 검색 조건으로 다시 시도해보세요
+            </p>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="space-y-8">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {performances.map((performance) => (
+            <PerformanceCard
+              key={performance.mt20id}
+              performance={performance}
+            />
+          ))}
+        </div>
+        {performances.length > 0 && (
+          <PerformancePagination
+            page={page}
+            hasNextPage={hasNextPage}
+            searchParams={searchParams}
+          />
+        )}
+      </div>
+    );
+  } catch (error) {
+    console.error("공연 목록 조회 실패:", error);
+
     return (
       <div className="flex min-h-100 flex-col items-center justify-center space-y-4">
         <div className="text-center">
           <h3 className="mb-2 text-xl font-semibold text-gray-900">
-            검색 결과가 없습니다
+            공연 정보를 불러오는데 실패했습니다
           </h3>
-          <p className="text-gray-600">다른 검색 조건으로 다시 시도해보세요</p>
+          <p className="text-gray-600">
+            {error instanceof Error
+              ? error.message
+              : "잠시 후 다시 시도해주세요"}
+          </p>
         </div>
       </div>
     );
   }
-
-  return (
-    <div className="space-y-8">
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {performances.map((performance) => (
-          <PerformanceCard key={performance.mt20id} performance={performance} />
-        ))}
-      </div>
-      {performances.length > 0 && (
-        <PerformancePagination
-          page={page}
-          hasNextPage={hasNextPage}
-          searchParams={searchParams}
-        />
-      )}
-    </div>
-  );
 }
 
 export default async function Home({

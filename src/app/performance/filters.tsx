@@ -21,9 +21,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { sanitizeSearchQuery } from "@/lib/utils";
 import { addWeeks, format } from "date-fns";
 import { ko } from "date-fns/locale";
-import DOMPurify from "isomorphic-dompurify";
 import { CalendarIcon, Search, X } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -175,10 +175,7 @@ function PerformanceFilters() {
     }
 
     // 검색어 sanitization (XSS 방지)
-    const sanitizedSearch = DOMPurify.sanitize(searchQuery.trim(), {
-      ALLOWED_TAGS: [],
-      ALLOWED_ATTR: [],
-    });
+    const sanitizedSearch = sanitizeSearchQuery(searchQuery);
 
     if (sanitizedSearch) {
       params.set("search", sanitizedSearch);
