@@ -3,4 +3,4 @@ User-agent: *
 Allow: /
 
 # Sitemap location
-Sitemap: https://gcp-cicd-test-390373525514.asia-northeast3.run.app/sitemap.xml
+Sitemap: https://plan-the-play.com/sitemap.xml
