@@ -62,11 +62,6 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           platforms: linux/amd64
-          build-args: |
-            NEXT_PUBLIC_PERFORMANCE_API_KEY=${{ secrets.NEXT_PUBLIC_PERFORMANCE_API_KEY }}
-            NEXT_PUBLIC_PERFORMANCE_API_URL=${{ secrets.NEXT_PUBLIC_PERFORMANCE_API_URL }}
-            NEXT_PUBLIC_GOV_API_KEY=${{ secrets.NEXT_PUBLIC_GOV_API_KEY }}
-            NEXT_PUBLIC_GOV_API_URL=${{ secrets.NEXT_PUBLIC_GOV_API_URL }}
 
       - name: Deploy to Cloud Run
         id: deploy
@@ -84,6 +79,8 @@ jobs:
             --port=3000
           env_vars: |
             NODE_ENV=production
+            PERFORMANCE_API_KEY=${{ secrets.PERFORMANCE_API_KEY }}
+            PERFORMANCE_API_URL=${{ secrets.PERFORMANCE_API_URL }}
 
       - name: Show deployment URL
         run: |

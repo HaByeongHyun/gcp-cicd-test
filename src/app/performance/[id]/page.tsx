@@ -12,8 +12,8 @@ import { memo } from "react";
 import { parseStringPromise } from "xml2js";
 import { IntroImage, PerformanceImage } from "./PerformanceImage";
 
-const API_URL = process.env.NEXT_PUBLIC_PERFORMANCE_API_URL;
-const API_KEY = process.env.NEXT_PUBLIC_PERFORMANCE_API_KEY;
+const API_URL = process.env.PERFORMANCE_API_URL;
+const API_KEY = process.env.PERFORMANCE_API_KEY;
 
 // URL 검증 함수 (보안: javascript:, data: 등 악의적인 URL 차단)
 function isValidUrl(url: string): boolean {
@@ -39,7 +39,9 @@ async function getPerformanceDetail(id: string): Promise<PerformanceDetail> {
     throw new Error("올바르지 않은 공연 ID입니다.");
   }
 
-  const res = await fetch(`${API_URL}/pblprfr/${id}?service=${API_KEY}`);
+  const res = await fetch(`${API_URL}/pblprfr/${id}?service=${API_KEY}`, {
+    next: { revalidate: 3600 },
+  });
 
   // API 요청 에러 처리
   if (!res.ok) {

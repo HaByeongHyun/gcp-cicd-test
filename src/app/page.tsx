@@ -23,8 +23,8 @@ import { memo, Suspense } from "react";
 import { parseStringPromise } from "xml2js";
 import PerformanceFilters from "./performance/filters";
 
-const API_URL = process.env.NEXT_PUBLIC_PERFORMANCE_API_URL;
-const API_KEY = process.env.NEXT_PUBLIC_PERFORMANCE_API_KEY;
+const API_URL = process.env.PERFORMANCE_API_URL;
+const API_KEY = process.env.PERFORMANCE_API_KEY;
 
 export const metadata: Metadata = {
   title: "공연 검색",
@@ -263,9 +263,7 @@ async function PerformanceList({
 
   const apiUrl = `${API_URL}/pblprfr?${params.toString()}`;
 
-  const res = await fetch(apiUrl, {
-    cache: "no-store",
-  });
+  const res = await fetch(apiUrl);
 
   const xmlData = await res.text();
 
