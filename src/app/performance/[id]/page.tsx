@@ -289,7 +289,7 @@ export default async function PerformanceDetailPage({
               </CardHeader>
               <CardContent>
                 <p className="leading-relaxed whitespace-pre-wrap text-gray-700">
-                  {sanitizeText(performance.sty || "-")}
+                  {sanitizeText(performance.sty) || "-"}
                 </p>
               </CardContent>
             </Card>
