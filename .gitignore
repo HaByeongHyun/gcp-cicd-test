@@ -43,3 +43,6 @@ next-env.d.ts
 # GCP credentials
 gcp-key.json
 *-key.json
+
+# claude
+CHANGELOG.md
