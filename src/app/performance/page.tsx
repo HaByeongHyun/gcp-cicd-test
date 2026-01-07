@@ -224,8 +224,15 @@ async function PerformanceList({
   genre?: string;
   search?: string;
 }) {
+  // 환경 변수 검증
+  if (!API_URL || !API_KEY) {
+    throw new Error(
+      "공연 API 설정이 올바르지 않습니다. 환경 변수를 확인해주세요.",
+    );
+  }
+
   const params = new URLSearchParams({
-    service: API_KEY || "",
+    service: API_KEY,
     stdate,
     eddate,
     cpage: page.toString(),
@@ -250,6 +257,13 @@ async function PerformanceList({
   const res = await fetch(apiUrl, {
     cache: "no-store",
   });
+
+  // API 요청 에러 처리
+  if (!res.ok) {
+    throw new Error(
+      `공연 정보를 불러오는데 실패했습니다. (상태 코드: ${res.status})`,
+    );
+  }
 
   const xmlData = await res.text();
 

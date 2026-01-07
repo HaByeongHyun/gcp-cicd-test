@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/select";
 import { addWeeks, format } from "date-fns";
 import { ko } from "date-fns/locale";
+import DOMPurify from "isomorphic-dompurify";
 import { CalendarIcon, Search, X } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -67,10 +68,32 @@ function PerformanceFilters() {
 
   const parseDate = useCallback((dateString: string) => {
     if (!dateString || dateString.length !== 8) return undefined;
-    const year = parseInt(dateString.slice(0, 4));
-    const month = parseInt(dateString.slice(4, 6)) - 1;
-    const day = parseInt(dateString.slice(6, 8));
-    return new Date(year, month, day);
+
+    try {
+      const year = parseInt(dateString.slice(0, 4));
+      const month = parseInt(dateString.slice(4, 6)) - 1;
+      const day = parseInt(dateString.slice(6, 8));
+
+      // 유효한 날짜인지 검증
+      if (isNaN(year) || isNaN(month) || isNaN(day)) {
+        return undefined;
+      }
+
+      const date = new Date(year, month, day);
+
+      // 날짜가 유효한지 확인 (예: 2월 30일 같은 잘못된 날짜)
+      if (
+        date.getFullYear() !== year ||
+        date.getMonth() !== month ||
+        date.getDate() !== day
+      ) {
+        return undefined;
+      }
+
+      return date;
+    } catch {
+      return undefined;
+    }
   }, []);
 
   const formatDateToString = useCallback((date: Date | undefined) => {
@@ -151,8 +174,14 @@ function PerformanceFilters() {
       params.delete("genre");
     }
 
-    if (searchQuery.trim()) {
-      params.set("search", searchQuery.trim());
+    // 검색어 sanitization (XSS 방지)
+    const sanitizedSearch = DOMPurify.sanitize(searchQuery.trim(), {
+      ALLOWED_TAGS: [],
+      ALLOWED_ATTR: [],
+    });
+
+    if (sanitizedSearch) {
+      params.set("search", sanitizedSearch);
     } else {
       params.delete("search");
     }
