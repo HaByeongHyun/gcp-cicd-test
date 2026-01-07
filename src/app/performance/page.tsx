@@ -21,7 +21,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { memo, Suspense } from "react";
 import { parseStringPromise } from "xml2js";
-import PerformanceFilters from "./performance/filters";
+import PerformanceFilters from "./filters";
 
 const API_URL = process.env.NEXT_PUBLIC_PERFORMANCE_API_URL;
 const API_KEY = process.env.NEXT_PUBLIC_PERFORMANCE_API_KEY;
@@ -299,7 +299,7 @@ async function PerformanceList({
   );
 }
 
-export default async function Home({
+export default async function PerformancePage({
   searchParams,
 }: {
   searchParams: Promise<{
@@ -399,6 +399,11 @@ export default async function Home({
               search={search}
             />
           </Suspense>
+
+          {/* 출처 표기 */}
+          <div className="mt-12 text-center text-xs text-gray-400">
+            출처: (재)예술경영지원센터 공연예술통합전산망 (www.kopis.or.kr)
+          </div>
         </div>
       </section>
     </div>
