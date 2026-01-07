@@ -1,10 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { sanitizeText } from "@/lib/utils";
 import type {
   PerformanceDetail,
   PerformanceDetailApiResponse,
 } from "@/types/performance";
-import DOMPurify from "isomorphic-dompurify";
 import { ChevronLeft } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -289,10 +289,7 @@ export default async function PerformanceDetailPage({
               </CardHeader>
               <CardContent>
                 <p className="leading-relaxed whitespace-pre-wrap text-gray-700">
-                  {DOMPurify.sanitize(performance.sty.trim() || "-", {
-                    ALLOWED_TAGS: [],
-                    ALLOWED_ATTR: [],
-                  })}
+                  {sanitizeText(performance.sty || "-")}
                 </p>
               </CardContent>
             </Card>
