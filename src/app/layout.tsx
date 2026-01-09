@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Navigation } from "@/components/navigation";
+import { PWAInstallPrompt } from "@/components/pwa-install-prompt";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -78,6 +79,7 @@ export default function RootLayout({
       >
         <Navigation />
         {children}
+        <PWAInstallPrompt />
         <footer className="border-t bg-white py-8">
           <div className="mx-auto max-w-7xl px-4">
             <div className="flex flex-col items-center gap-4">
