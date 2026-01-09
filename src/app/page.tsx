@@ -405,7 +405,7 @@ export default async function Home({
             </span>
             실시간 업데이트
           </div>
-          <h1 className="mb-4 text-4xl font-bold text-gray-900 sm:text-5xl">
+          <h1 className="mb-4 text-3xl font-bold text-gray-900 sm:text-5xl">
             원하는 공연을 쉽고 빠르게
           </h1>
           <p className="mb-8 text-lg text-gray-600">
