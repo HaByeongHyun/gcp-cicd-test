@@ -129,13 +129,14 @@ function PerformanceFilters() {
       },
     );
 
-    if (filterRef.current) {
-      observer.observe(filterRef.current);
+    const element = filterRef.current;
+    if (element) {
+      observer.observe(element);
     }
 
     return () => {
-      if (filterRef.current) {
-        observer.unobserve(filterRef.current);
+      if (element) {
+        observer.unobserve(element);
       }
     };
   }, []);
