@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -11,6 +11,34 @@ interface PromptContentProps {
   variant: "mobile" | "desktop";
   onInstall: () => void;
   onDismiss: () => void;
+}
+
+// localStorage 체크 로직을 재사용 가능한 함수로 추출
+function shouldShowPrompt(): boolean {
+  try {
+    // 이미 설치를 수락한 경우
+    if (localStorage.getItem("pwa-prompt-accepted") === "true") {
+      return false;
+    }
+
+    // 최근 1일 이내에 닫은 적이 있는지 확인
+    const dismissedAt = localStorage.getItem("pwa-prompt-dismissed");
+    if (dismissedAt) {
+      const daysSinceDismissed =
+        (Date.now() - parseInt(dismissedAt, 10)) / (1000 * 60 * 60 * 24);
+      if (daysSinceDismissed < 1) {
+        return false; // 1일 이내면 표시하지 않음
+      }
+    }
+
+    return true;
+  } catch (error) {
+    // localStorage 접근 실패 시 (시크릿 모드 등) 무시하고 표시
+    if (process.env.NODE_ENV === "development") {
+      console.warn("localStorage access failed:", error);
+    }
+    return true;
+  }
 }
 
 function PromptContent({ variant, onInstall, onDismiss }: PromptContentProps) {
@@ -34,7 +62,7 @@ function PromptContent({ variant, onInstall, onDismiss }: PromptContentProps) {
       className={
         isMobile
           ? "fixed inset-x-4 top-4 z-50 rounded-lg bg-white p-4 shadow-2xl sm:hidden"
-          : "fixed left-1/2 top-4 z-50 hidden max-w-sm -translate-x-1/2 rounded-lg bg-white p-6 shadow-2xl sm:block"
+          : "fixed top-4 left-1/2 z-50 hidden max-w-sm -translate-x-1/2 rounded-lg bg-white p-6 shadow-2xl sm:block"
       }
     >
       {isMobile ? (
@@ -137,30 +165,14 @@ export function PWAInstallPrompt() {
     useState<BeforeInstallPromptEvent | null>(null);
   const [showPrompt, setShowPrompt] = useState(false);
 
+  // useRef로 timeoutId 관리 (메모리 누수 방지)
+  const timeoutIdRef = useRef<NodeJS.Timeout | null>(null);
+
   useEffect(() => {
-    try {
-      // 이미 설치를 수락한 경우 프롬프트 표시하지 않음
-      if (localStorage.getItem("pwa-prompt-accepted") === "true") {
-        return;
-      }
-
-      // 최근 1일 이내에 닫은 적이 있는지 확인
-      const dismissedAt = localStorage.getItem("pwa-prompt-dismissed");
-      if (dismissedAt) {
-        const daysSinceDismissed =
-          (Date.now() - parseInt(dismissedAt)) / (1000 * 60 * 60 * 24);
-        if (daysSinceDismissed < 1) {
-          return; // 1일 이내면 프롬프트 표시하지 않음
-        }
-      }
-    } catch (error) {
-      // localStorage 접근 실패 시 (시크릿 모드 등) 무시하고 계속 진행
-      if (process.env.NODE_ENV === "development") {
-        console.warn("localStorage access failed:", error);
-      }
+    // 초기 체크: 프롬프트를 표시해야 하는지 확인
+    if (!shouldShowPrompt()) {
+      return;
     }
-
-    let timeoutId: NodeJS.Timeout | undefined;
 
     // beforeinstallprompt 이벤트 캡처
     const handler = (e: Event) => {
@@ -168,44 +180,24 @@ export function PWAInstallPrompt() {
       setDeferredPrompt(e as BeforeInstallPromptEvent);
 
       // 기존 timeout이 있으면 정리 (메모리 누수 방지)
-      if (timeoutId) {
-        clearTimeout(timeoutId);
+      if (timeoutIdRef.current) {
+        clearTimeout(timeoutIdRef.current);
       }
 
-      timeoutId = setTimeout(() => {
-        // 알림을 표시하기 직전에 localStorage를 다시 확인
-        try {
-          // 이미 설치를 수락한 경우
-          if (localStorage.getItem("pwa-prompt-accepted") === "true") {
-            return;
-          }
-
-          // 최근 1일 이내에 닫은 적이 있는지 재확인
-          const dismissedAt = localStorage.getItem("pwa-prompt-dismissed");
-          if (dismissedAt) {
-            const daysSinceDismissed =
-              (Date.now() - parseInt(dismissedAt)) / (1000 * 60 * 60 * 24);
-            if (daysSinceDismissed < 1) {
-              return; // 1일 이내면 표시하지 않음
-            }
-          }
-        } catch (error) {
-          // localStorage 접근 실패 시 무시하고 계속 진행
-          if (process.env.NODE_ENV === "development") {
-            console.warn("localStorage access failed:", error);
-          }
+      timeoutIdRef.current = setTimeout(() => {
+        // 알림을 표시하기 직전에 다시 확인
+        if (shouldShowPrompt()) {
+          setShowPrompt(true);
         }
-
-        setShowPrompt(true);
-      }, 5000);
+      }, 10000);
     };
 
     window.addEventListener("beforeinstallprompt", handler);
 
     return () => {
       window.removeEventListener("beforeinstallprompt", handler);
-      if (timeoutId) {
-        clearTimeout(timeoutId);
+      if (timeoutIdRef.current) {
+        clearTimeout(timeoutIdRef.current);
       }
     };
   }, []);
