@@ -138,24 +138,64 @@ export function PWAInstallPrompt() {
   const [showPrompt, setShowPrompt] = useState(false);
 
   useEffect(() => {
-    // 최근 1일 이내에 닫은 적이 있는지 확인
-    const dismissedAt = localStorage.getItem("pwa-prompt-dismissed");
-    if (dismissedAt) {
-      const daysSinceDismissed =
-        (Date.now() - parseInt(dismissedAt)) / (1000 * 60 * 60 * 24);
-      if (daysSinceDismissed < 1) {
-        return; // 1일 이내면 프롬프트 표시하지 않음
+    try {
+      // 이미 설치를 수락한 경우 프롬프트 표시하지 않음
+      if (localStorage.getItem("pwa-prompt-accepted") === "true") {
+        return;
+      }
+
+      // 최근 1일 이내에 닫은 적이 있는지 확인
+      const dismissedAt = localStorage.getItem("pwa-prompt-dismissed");
+      if (dismissedAt) {
+        const daysSinceDismissed =
+          (Date.now() - parseInt(dismissedAt)) / (1000 * 60 * 60 * 24);
+        if (daysSinceDismissed < 1) {
+          return; // 1일 이내면 프롬프트 표시하지 않음
+        }
+      }
+    } catch (error) {
+      // localStorage 접근 실패 시 (시크릿 모드 등) 무시하고 계속 진행
+      if (process.env.NODE_ENV === "development") {
+        console.warn("localStorage access failed:", error);
       }
     }
 
-    let timeoutId: NodeJS.Timeout;
+    let timeoutId: NodeJS.Timeout | undefined;
 
     // beforeinstallprompt 이벤트 캡처
     const handler = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);
 
+      // 기존 timeout이 있으면 정리 (메모리 누수 방지)
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+
       timeoutId = setTimeout(() => {
+        // 알림을 표시하기 직전에 localStorage를 다시 확인
+        try {
+          // 이미 설치를 수락한 경우
+          if (localStorage.getItem("pwa-prompt-accepted") === "true") {
+            return;
+          }
+
+          // 최근 1일 이내에 닫은 적이 있는지 재확인
+          const dismissedAt = localStorage.getItem("pwa-prompt-dismissed");
+          if (dismissedAt) {
+            const daysSinceDismissed =
+              (Date.now() - parseInt(dismissedAt)) / (1000 * 60 * 60 * 24);
+            if (daysSinceDismissed < 1) {
+              return; // 1일 이내면 표시하지 않음
+            }
+          }
+        } catch (error) {
+          // localStorage 접근 실패 시 무시하고 계속 진행
+          if (process.env.NODE_ENV === "development") {
+            console.warn("localStorage access failed:", error);
+          }
+        }
+
         setShowPrompt(true);
       }, 5000);
     };
@@ -185,6 +225,17 @@ export function PWAInstallPrompt() {
         console.log(`User response: ${outcome}`);
       }
 
+      // 수락한 경우 localStorage에 기록 (다시 프롬프트 표시하지 않기 위해)
+      if (outcome === "accepted") {
+        try {
+          localStorage.setItem("pwa-prompt-accepted", "true");
+        } catch (error) {
+          if (process.env.NODE_ENV === "development") {
+            console.warn("localStorage access failed:", error);
+          }
+        }
+      }
+
       // 프롬프트 초기화
       setDeferredPrompt(null);
       setShowPrompt(false);
@@ -199,7 +250,14 @@ export function PWAInstallPrompt() {
 
   const handleDismiss = useCallback(() => {
     // 현재 시간을 localStorage에 저장
-    localStorage.setItem("pwa-prompt-dismissed", Date.now().toString());
+    try {
+      localStorage.setItem("pwa-prompt-dismissed", Date.now().toString());
+    } catch (error) {
+      // localStorage 접근 실패 시 (시크릿 모드, 쿼터 초과 등) 무시
+      if (process.env.NODE_ENV === "development") {
+        console.warn("localStorage access failed:", error);
+      }
+    }
     setShowPrompt(false);
   }, []);
 
