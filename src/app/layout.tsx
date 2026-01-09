@@ -35,6 +35,7 @@ export const metadata: Metadata = {
   authors: [{ name: "플랜더플레이" }],
   creator: "플랜더플레이",
   publisher: "플랜더플레이",
+  manifest: "/manifest.webmanifest",
   formatDetection: {
     email: false,
     address: false,
