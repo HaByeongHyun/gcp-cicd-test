@@ -1,10 +1,135 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
   userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
+}
+
+interface PromptContentProps {
+  variant: "mobile" | "desktop";
+  onInstall: () => void;
+  onDismiss: () => void;
+}
+
+function PromptContent({ variant, onInstall, onDismiss }: PromptContentProps) {
+  const isMobile = variant === "mobile";
+  const titleId = `pwa-prompt-title-${variant}`;
+  const descId = `pwa-prompt-desc-${variant}`;
+
+  const title = isMobile ? "홈 화면에 추가" : "홈 화면에 추가하기";
+  const description = isMobile
+    ? "빠른 접속이 가능해요"
+    : "플랜더플레이를 홈 화면에 추가하고 더 빠르게 접속하세요!";
+  const installLabel = isMobile ? "추가" : "추가하기";
+  const dismissLabel = isMobile ? "1일 후에" : "1일 후에 보기";
+
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby={titleId}
+      aria-describedby={descId}
+      className={
+        isMobile
+          ? "fixed inset-x-4 top-4 z-50 rounded-lg bg-white p-4 shadow-2xl sm:hidden"
+          : "fixed left-1/2 top-4 z-50 hidden max-w-sm -translate-x-1/2 rounded-lg bg-white p-6 shadow-2xl sm:block"
+      }
+    >
+      {isMobile ? (
+        /* 모바일 레이아웃: 텍스트(왼쪽) + 버튼(오른쪽) */
+        <div className="flex items-center justify-between gap-3">
+          <div className="min-w-0 flex-1">
+            <h3 id={titleId} className="text-sm font-semibold text-gray-900">
+              {title}
+            </h3>
+            <p id={descId} className="mt-0.5 text-xs text-gray-600">
+              {description}
+            </p>
+          </div>
+          <div className="flex shrink-0 gap-2">
+            <button
+              onClick={onInstall}
+              className="rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-700"
+              aria-label="홈 화면에 추가하기"
+            >
+              {installLabel}
+            </button>
+            <button
+              onClick={onDismiss}
+              className="rounded-md border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50"
+              aria-label="1일 후에 다시 보기"
+            >
+              {dismissLabel}
+            </button>
+          </div>
+        </div>
+      ) : (
+        /* PC 레이아웃: 아이콘 + 텍스트/버튼 + X버튼 */
+        <div className="flex items-start gap-4">
+          <div className="shrink-0">
+            <svg
+              className="h-12 w-12 text-blue-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"
+              />
+            </svg>
+          </div>
+          <div className="flex-1">
+            <h3 id={titleId} className="text-lg font-semibold text-gray-900">
+              {title}
+            </h3>
+            <p id={descId} className="mt-1 text-sm text-gray-600">
+              {description}
+            </p>
+            <div className="mt-4 flex gap-2">
+              <button
+                onClick={onInstall}
+                className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+                aria-label="홈 화면에 추가하기"
+              >
+                {installLabel}
+              </button>
+              <button
+                onClick={onDismiss}
+                className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                aria-label="1일 후에 다시 보기"
+              >
+                {dismissLabel}
+              </button>
+            </div>
+          </div>
+          <button
+            onClick={onDismiss}
+            className="shrink-0 text-gray-400 hover:text-gray-600"
+            aria-label="알림 닫기"
+          >
+            <svg
+              className="h-5 w-5"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+              aria-hidden="true"
+            >
+              <path
+                fillRule="evenodd"
+                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                clipRule="evenodd"
+              />
+            </svg>
+          </button>
+        </div>
+      )}
+    </div>
+  );
 }
 
 export function PWAInstallPrompt() {
@@ -13,6 +138,16 @@ export function PWAInstallPrompt() {
   const [showPrompt, setShowPrompt] = useState(false);
 
   useEffect(() => {
+    // 최근 1일 이내에 닫은 적이 있는지 확인
+    const dismissedAt = localStorage.getItem("pwa-prompt-dismissed");
+    if (dismissedAt) {
+      const daysSinceDismissed =
+        (Date.now() - parseInt(dismissedAt)) / (1000 * 60 * 60 * 24);
+      if (daysSinceDismissed < 1) {
+        return; // 1일 이내면 프롬프트 표시하지 않음
+      }
+    }
+
     let timeoutId: NodeJS.Timeout;
 
     // beforeinstallprompt 이벤트 캡처
@@ -22,7 +157,7 @@ export function PWAInstallPrompt() {
 
       timeoutId = setTimeout(() => {
         setShowPrompt(true);
-      }, 15000);
+      }, 5000);
     };
 
     window.addEventListener("beforeinstallprompt", handler);
@@ -62,9 +197,27 @@ export function PWAInstallPrompt() {
     }
   };
 
-  const handleDismiss = () => {
+  const handleDismiss = useCallback(() => {
+    // 현재 시간을 localStorage에 저장
+    localStorage.setItem("pwa-prompt-dismissed", Date.now().toString());
     setShowPrompt(false);
-  };
+  }, []);
+
+  // ESC 키로 닫기
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        handleDismiss();
+      }
+    };
+
+    if (showPrompt) {
+      window.addEventListener("keydown", handleKeyDown);
+      return () => {
+        window.removeEventListener("keydown", handleKeyDown);
+      };
+    }
+  }, [showPrompt, handleDismiss]);
 
   if (!showPrompt || !deferredPrompt) {
     return null;
@@ -72,86 +225,16 @@ export function PWAInstallPrompt() {
 
   return (
     <>
-      {/* 모바일 */}
-      <div className="fixed inset-x-4 top-4 z-50 rounded-lg bg-white p-4 shadow-2xl sm:hidden">
-        <div className="flex items-center justify-between gap-3">
-          <div className="min-w-0 flex-1">
-            <h3 className="text-sm font-semibold text-gray-900">
-              홈 화면에 추가
-            </h3>
-            <p className="mt-0.5 text-xs text-gray-600">빠른 접속이 가능해요</p>
-          </div>
-          <div className="flex shrink-0 gap-2">
-            <button
-              onClick={handleInstall}
-              className="rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-700"
-            >
-              추가
-            </button>
-            <button
-              onClick={handleDismiss}
-              className="rounded-md border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50"
-            >
-              닫기
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* PC */}
-      <div className="fixed top-4 left-1/2 z-50 hidden max-w-sm -translate-x-1/2 rounded-lg bg-white p-6 shadow-2xl sm:block">
-        <div className="flex items-start gap-4">
-          <div className="shrink-0">
-            <svg
-              className="h-12 w-12 text-blue-600"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"
-              />
-            </svg>
-          </div>
-          <div className="flex-1">
-            <h3 className="text-lg font-semibold text-gray-900">
-              홈 화면에 추가하기
-            </h3>
-            <p className="mt-1 text-sm text-gray-600">
-              플랜더플레이를 홈 화면에 추가하고 더 빠르게 접속하세요!
-            </p>
-            <div className="mt-4 flex gap-2">
-              <button
-                onClick={handleInstall}
-                className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-              >
-                추가하기
-              </button>
-              <button
-                onClick={handleDismiss}
-                className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-              >
-                나중에
-              </button>
-            </div>
-          </div>
-          <button
-            onClick={handleDismiss}
-            className="shrink-0 text-gray-400 hover:text-gray-600"
-          >
-            <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-              <path
-                fillRule="evenodd"
-                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                clipRule="evenodd"
-              />
-            </svg>
-          </button>
-        </div>
-      </div>
+      <PromptContent
+        variant="mobile"
+        onInstall={handleInstall}
+        onDismiss={handleDismiss}
+      />
+      <PromptContent
+        variant="desktop"
+        onInstall={handleInstall}
+        onDismiss={handleDismiss}
+      />
     </>
   );
 }
