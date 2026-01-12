@@ -8,7 +8,6 @@ import {
 import { ChevronLeft } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { memo } from "react";
 import { IntroImage, PerformanceImage } from "./PerformanceImage";
 
 const API_URL = process.env.PERFORMANCE_API_URL;
@@ -314,33 +313,21 @@ export default async function PerformanceDetailPage({
   );
 }
 
-const InfoItem = memo(
-  ({
-    label,
-    value,
-    className,
-  }: {
-    label: string;
-    value: string;
-    className?: string;
-  }) => {
-    return (
-      <div className={className}>
-        <dt className="mb-1 text-sm font-medium text-gray-500">{label}</dt>
-        <dd className="text-base text-gray-900">{value.trim() || "-"}</dd>
-      </div>
-    );
-  },
-);
+const InfoItem = ({
+  label,
+  value,
+  className,
+}: {
+  label: string;
+  value: string;
+  className?: string;
+}) => {
+  return (
+    <div className={className}>
+      <dt className="mb-1 text-sm font-medium text-gray-500">{label}</dt>
+      <dd className="text-base text-gray-900">{value.trim() || "-"}</dd>
+    </div>
+  );
+};
 
 InfoItem.displayName = "InfoItem";
-
-const Badge = memo(({ children }: { children: React.ReactNode }) => {
-  return (
-    <span className="bg-primary/10 text-primary inline-flex items-center rounded-full px-3 py-1 text-sm font-medium">
-      {children}
-    </span>
-  );
-});
-
-Badge.displayName = "Badge";

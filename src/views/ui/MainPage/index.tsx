@@ -1,5 +1,5 @@
 import { addWeeks, format } from "date-fns";
-import { memo, Suspense } from "react";
+import { Suspense } from "react";
 import PerformanceFilters from "./Filters";
 import MainBanner from "./MainBanner";
 import PerformanceList from "./PerformanceList";
@@ -65,4 +65,4 @@ const MainPage = async ({
   );
 };
 
-export default memo(MainPage);
+export default MainPage;

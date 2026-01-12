@@ -1,5 +1,5 @@
 import { PWAInstallPrompt } from "@/components/pwa-install-prompt";
-import { Footer, Header, ScrollToTop } from "@/shared/ui";
+import { Footer, Header } from "@/shared/ui";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
@@ -76,7 +76,7 @@ export default function RootLayout({
         <PWAInstallPrompt />
         {children}
         <Footer />
-        <ScrollToTop />
+        {/* <ScrollToTop /> */}
       </body>
     </html>
   );

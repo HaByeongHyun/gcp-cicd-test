@@ -5,7 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Performance } from "@/types/performance";
+import { Performance } from "@/shared/model";
 import Image from "next/image";
 import Link from "next/link";
 import { memo } from "react";

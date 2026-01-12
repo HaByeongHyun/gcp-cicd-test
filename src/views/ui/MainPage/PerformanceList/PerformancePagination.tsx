@@ -62,3 +62,5 @@ const PerformancePagination = memo(
 );
 
 export default PerformancePagination;
+
+PerformancePagination.displayName = "PerformancePagination";
