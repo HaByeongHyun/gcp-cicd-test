@@ -4,8 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Search, Ticket } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { memo } from "react";
 
-export function Navigation() {
+const Navigation = () => {
   const pathname = usePathname();
 
   return (
@@ -13,7 +14,7 @@ export function Navigation() {
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4">
         {/* 로고 및 사이트명 */}
         <Link href="/" className="flex items-center gap-3">
-          <div className="flex size-10 items-center justify-center rounded-lg bg-gradient-to-br from-purple-600 to-blue-500">
+          <div className="flex size-10 items-center justify-center rounded-lg bg-linear-to-br from-purple-600 to-blue-500">
             <Ticket className="size-6 text-white" />
           </div>
           <div>
@@ -36,4 +37,6 @@ export function Navigation() {
       </div>
     </nav>
   );
-}
+};
+
+export default memo(Navigation);
