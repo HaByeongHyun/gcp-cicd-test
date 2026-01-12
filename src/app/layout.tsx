@@ -1,17 +1,15 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import { Navigation } from "@/components/navigation";
 import { PWAInstallPrompt } from "@/components/pwa-install-prompt";
+import { Footer, Header } from "@/shared/ui";
+import type { Metadata } from "next";
+import localFont from "next/font/local";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const pretendard = localFont({
+  src: "../fonts/PretendardVariable.woff2",
+  variable: "--font-pretendard",
+  weight: "45 920",
+  display: "swap",
+  preload: true,
 });
 
 export const metadata: Metadata = {
@@ -36,7 +34,6 @@ export const metadata: Metadata = {
   authors: [{ name: "플랜더플레이" }],
   creator: "플랜더플레이",
   publisher: "플랜더플레이",
-  manifest: "/manifest.webmanifest",
   formatDetection: {
     email: false,
     address: false,
@@ -74,45 +71,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <Navigation />
-        {children}
+      <body className={`${pretendard.variable} font-sans antialiased`}>
+        <Header />
         <PWAInstallPrompt />
-        <footer className="border-t bg-white py-8">
-          <div className="mx-auto max-w-7xl px-4">
-            <div className="flex flex-col items-center gap-4">
-              {/* 링크 */}
-              <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-gray-600">
-                <a
-                  href="/about"
-                  className="hover:text-gray-900 hover:underline"
-                >
-                  소개
-                </a>
-                <span className="text-gray-300">|</span>
-                <a
-                  href="/privacy"
-                  className="hover:text-gray-900 hover:underline"
-                >
-                  개인정보처리방침
-                </a>
-              </div>
-
-              {/* 문의 이메일 */}
-              <div className="text-sm text-gray-600">
-                문의: contact.soulha@gmail.com
-              </div>
-
-              {/* 저작권 및 출처 */}
-              <div className="text-center text-xs text-gray-500">
-                <p>Data provided by KOPIS (공연예술통합전산망)</p>
-                <p className="mt-1">© 2025 플랜더플레이. All rights reserved.</p>
-              </div>
-            </div>
-          </div>
-        </footer>
+        {children}
+        <Footer />
+        {/* <ScrollToTop /> */}
       </body>
     </html>
   );
