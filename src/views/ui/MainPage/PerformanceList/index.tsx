@@ -57,7 +57,7 @@ const PerformanceList = async ({
     const apiUrl = `${API_URL}/pblprfr?${params.toString()}`;
 
     const res = await fetch(apiUrl, {
-      cache: "no-store",
+      next: { revalidate: 600 },
     });
 
     if (!res.ok) {
