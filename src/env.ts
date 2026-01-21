@@ -1,5 +1,6 @@
 // Next.js의 빌드 타임 인라인 치환을 위해 process.env에 직접 접근해야 함
 
+import "server-only";
 const validateEnv = () => {
   const isProduction = process.env.NODE_ENV === "production";
   
