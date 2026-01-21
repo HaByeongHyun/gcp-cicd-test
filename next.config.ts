@@ -1,36 +1,36 @@
-import type { NextConfig } from "next";
-import withSerwistInit from "@serwist/next";
+import type { NextConfig } from 'next';
+import withSerwistInit from '@serwist/next';
 
 const withSerwist = withSerwistInit({
-  swSrc: "src/app/sw.ts",
-  swDest: "public/sw.js",
+  swSrc: 'src/app/sw.ts',
+  swDest: 'public/sw.js',
   cacheOnNavigation: true,
   reloadOnOnline: true,
-  disable: process.env.NODE_ENV === "development",
+  disable: process.env.NODE_ENV === 'development',
 });
 
 const nextConfig: NextConfig = {
-  output: "standalone",
+  output: 'standalone',
   images: {
     remotePatterns: [
       {
-        protocol: "http",
-        hostname: "www.kopis.or.kr",
-        pathname: "/upload/**",
+        protocol: 'http',
+        hostname: 'www.kopis.or.kr',
+        pathname: '/upload/**',
       },
     ],
   },
   async redirects() {
     return [
       {
-        source: "/:path*",
+        source: '/:path*',
         has: [
           {
-            type: "host",
-            value: "www.plan-the-play.com",
+            type: 'host',
+            value: 'www.plan-the-play.com',
           },
         ],
-        destination: "https://plan-the-play.com/:path*",
+        destination: 'https://plan-the-play.com/:path*',
         permanent: true, // 301 redirect for SEO
       },
     ];
@@ -49,37 +49,37 @@ const nextConfig: NextConfig = {
       "base-uri 'self'",
       "form-action 'self'",
       "frame-ancestors 'self'",
-      "upgrade-insecure-requests",
-    ].join("; ");
+      'upgrade-insecure-requests',
+    ].join('; ');
 
     return [
       {
-        source: "/:path*",
+        source: '/:path*',
         headers: [
           // Content Security Policy
           {
-            key: "Content-Security-Policy",
+            key: 'Content-Security-Policy',
             value: cspDirectives,
           },
           // MIME 타입 스니핑 방지
           {
-            key: "X-Content-Type-Options",
-            value: "nosniff",
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
           },
           // 클릭재킹 방어
           {
-            key: "X-Frame-Options",
-            value: "SAMEORIGIN",
+            key: 'X-Frame-Options',
+            value: 'SAMEORIGIN',
           },
           // Referrer 정책
           {
-            key: "Referrer-Policy",
-            value: "strict-origin-when-cross-origin",
+            key: 'Referrer-Policy',
+            value: 'strict-origin-when-cross-origin',
           },
           // 불필요한 브라우저 기능 비활성화
           {
-            key: "Permissions-Policy",
-            value: "camera=(), microphone=(), geolocation=()",
+            key: 'Permissions-Policy',
+            value: 'camera=(), microphone=(), geolocation=()',
           },
         ],
       },

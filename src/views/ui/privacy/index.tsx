@@ -1,8 +1,8 @@
-import type { Metadata } from "next";
+import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: "개인정보처리방침",
-  description: "플랜더플레이 개인정보처리방침",
+  title: '개인정보처리방침',
+  description: '플랜더플레이 개인정보처리방침',
 };
 
 export default function PrivacyPage() {
@@ -18,7 +18,7 @@ export default function PrivacyPage() {
             {/* 기본 정보 */}
             <section>
               <p className="text-sm text-gray-500">
-                최종 수정일: {new Date().toLocaleDateString("ko-KR")}
+                최종 수정일: {new Date().toLocaleDateString('ko-KR')}
               </p>
               <p className="mt-4">
                 플랜더플레이(이하 &quot;본 서비스&quot;)는 사용자의
@@ -88,7 +88,7 @@ export default function PrivacyPage() {
                   </p>
                   <ul className="mt-2 ml-6 list-disc space-y-1 text-sm text-blue-800">
                     <li>
-                      Google 광고 설정 페이지:{" "}
+                      Google 광고 설정 페이지:{' '}
                       <a
                         href="https://www.google.com/settings/ads"
                         target="_blank"
@@ -189,7 +189,7 @@ export default function PrivacyPage() {
               <div className="mt-4 rounded-lg bg-gray-50 p-4">
                 <p className="font-medium">서비스 운영자: 플랜더플레이</p>
                 <p className="mt-2">
-                  이메일:{" "}
+                  이메일:{' '}
                   <a
                     href="mailto:contact.soulha@gmail.com"
                     className="text-blue-600 hover:underline"

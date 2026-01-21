@@ -10,21 +10,25 @@ description: Runs lint, type-check, and build to verify the project is ready for
 ## Execution Steps
 
 **1. Lint Check**
+
 - Run `pnpm lint`
 - Report any ESLint errors
 - Stop if critical errors found
 
 **2. Type Check**
+
 - Run `pnpm tsc --noEmit`
 - Check for TypeScript errors
 - Show file and line numbers for errors
 
 **3. Production Build**
+
 - Run `pnpm build`
 - Measure build time
 - Check build output size
 
 **4. Results Summary**
+
 - ✅ All checks passed: "Ready to commit/deploy"
 - ❌ Failed checks: Detailed error messages with fix suggestions
 
@@ -44,6 +48,7 @@ description: Runs lint, type-check, and build to verify the project is ready for
 ## Options
 
 User can request:
+
 - `--skip-lint`: Skip lint check
 - `--quick`: Only run type-check
 - `--full`: Include tests (if test script exists)

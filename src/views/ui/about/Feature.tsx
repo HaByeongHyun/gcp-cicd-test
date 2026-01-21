@@ -1,5 +1,5 @@
-import { Calendar, Filter, Search, Ticket } from "lucide-react";
-import { memo } from "react";
+import { Calendar, Filter, Search, Ticket } from 'lucide-react';
+import { memo } from 'react';
 
 const AboutFeature = () => {
   return (

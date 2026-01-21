@@ -1,5 +1,5 @@
-import { Ticket } from "lucide-react";
-import { memo } from "react";
+import { Ticket } from 'lucide-react';
+import { memo } from 'react';
 
 const AboutBanner = () => {
   return (

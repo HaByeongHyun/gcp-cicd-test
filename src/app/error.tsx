@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertTriangle, Home, RefreshCw } from "lucide-react";
-import Link from "next/link";
-import { useEffect } from "react";
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { AlertTriangle, Home, RefreshCw } from 'lucide-react';
+import Link from 'next/link';
+import { useEffect } from 'react';
 
 interface ErrorProps {
   error: Error & { digest?: string };
@@ -13,8 +13,8 @@ interface ErrorProps {
 
 export default function Error({ error, reset }: ErrorProps) {
   useEffect(() => {
-    if (process.env.NODE_ENV === "development") {
-      console.error("App Error:", error);
+    if (process.env.NODE_ENV === 'development') {
+      console.error('App Error:', error);
     }
   }, [error]);
 
@@ -34,12 +34,12 @@ export default function Error({ error, reset }: ErrorProps) {
             잠시 후 다시 시도해주세요.
           </p>
 
-          {process.env.NODE_ENV === "development" && (
+          {process.env.NODE_ENV === 'development' && (
             <div className="rounded-lg bg-gray-100 p-4 text-left">
               <p className="mb-1 text-xs font-semibold text-gray-500">
                 Error Details:
               </p>
-              <p className="text-sm font-mono text-gray-700 break-all">
+              <p className="font-mono text-sm break-all text-gray-700">
                 {error.message}
               </p>
               {error.digest && (

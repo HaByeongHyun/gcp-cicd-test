@@ -1,5 +1,5 @@
-import { Ticket } from "lucide-react";
-import Link from "next/link";
+import { Ticket } from 'lucide-react';
+import Link from 'next/link';
 
 const Header = () => {
   return (
@@ -7,7 +7,10 @@ const Header = () => {
       <div className="mx-auto max-w-7xl px-4">
         <div className="flex h-16 items-center justify-between">
           {/* 로고 */}
-          <Link href="/" className="flex items-center gap-2 transition-opacity hover:opacity-80">
+          <Link
+            href="/"
+            className="flex items-center gap-2 transition-opacity hover:opacity-80"
+          >
             <Ticket className="h-6 w-6 text-purple-600" />
             <span className="text-xl font-bold text-gray-900">
               플랜더플레이

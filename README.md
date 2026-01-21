@@ -45,6 +45,7 @@ This project is configured for automatic deployment to Google Cloud Run using Gi
      ```
 
 2. **Create Artifact Registry Repository**
+
    ```bash
    gcloud artifacts repositories create gcp-cicd-test \
      --repository-format=docker \
@@ -53,6 +54,7 @@ This project is configured for automatic deployment to Google Cloud Run using Gi
    ```
 
 3. **Create Service Account**
+
    ```bash
    gcloud iam service-accounts create github-actions \
      --description="Service account for GitHub Actions" \
@@ -60,6 +62,7 @@ This project is configured for automatic deployment to Google Cloud Run using Gi
    ```
 
 4. **Grant Required Permissions**
+
    ```bash
    PROJECT_ID=$(gcloud config get-value project)
 
@@ -77,6 +80,7 @@ This project is configured for automatic deployment to Google Cloud Run using Gi
    ```
 
 5. **Create Service Account Key**
+
    ```bash
    gcloud iam service-accounts keys create key.json \
      --iam-account=github-actions@$PROJECT_ID.iam.gserviceaccount.com
@@ -93,10 +97,12 @@ This project is configured for automatic deployment to Google Cloud Run using Gi
 ### Deployment Workflow
 
 **Automatic Deployment:**
+
 - Push to `main` branch → Deploys to Cloud Run
 - Create tag (e.g., `v1.0.0`) → Deploys tagged version
 
 **PR Testing:**
+
 - Create/update PR → Runs CI tests (lint, build, Docker test)
 
 ### Manual Deployment
@@ -133,6 +139,7 @@ docker run -p 3000:3000 gcp-cicd-test:local
 ### Environment Variables
 
 Copy `.env.example` to `.env.local` for local development:
+
 ```bash
 cp .env.example .env.local
 ```

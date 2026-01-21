@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
-  userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
 }
 
 interface PromptContentProps {
-  variant: "mobile" | "desktop";
+  variant: 'mobile' | 'desktop';
   onInstall: () => void;
   onDismiss: () => void;
 }
@@ -17,12 +17,12 @@ interface PromptContentProps {
 function shouldShowPrompt(): boolean {
   try {
     // 이미 설치를 수락한 경우
-    if (localStorage.getItem("pwa-prompt-accepted") === "true") {
+    if (localStorage.getItem('pwa-prompt-accepted') === 'true') {
       return false;
     }
 
     // 최근 1일 이내에 닫은 적이 있는지 확인
-    const dismissedAt = localStorage.getItem("pwa-prompt-dismissed");
+    const dismissedAt = localStorage.getItem('pwa-prompt-dismissed');
     if (dismissedAt) {
       const daysSinceDismissed =
         (Date.now() - parseInt(dismissedAt, 10)) / (1000 * 60 * 60 * 24);
@@ -34,24 +34,24 @@ function shouldShowPrompt(): boolean {
     return true;
   } catch (error) {
     // localStorage 접근 실패 시 (시크릿 모드 등) 무시하고 표시
-    if (process.env.NODE_ENV === "development") {
-      console.warn("localStorage access failed:", error);
+    if (process.env.NODE_ENV === 'development') {
+      console.warn('localStorage access failed:', error);
     }
     return true;
   }
 }
 
 function PromptContent({ variant, onInstall, onDismiss }: PromptContentProps) {
-  const isMobile = variant === "mobile";
+  const isMobile = variant === 'mobile';
   const titleId = `pwa-prompt-title-${variant}`;
   const descId = `pwa-prompt-desc-${variant}`;
 
-  const title = isMobile ? "홈 화면에 추가" : "홈 화면에 추가하기";
+  const title = isMobile ? '홈 화면에 추가' : '홈 화면에 추가하기';
   const description = isMobile
-    ? "빠른 접속이 가능해요"
-    : "플랜더플레이를 홈 화면에 추가하고 더 빠르게 접속하세요!";
-  const installLabel = isMobile ? "추가" : "추가하기";
-  const dismissLabel = isMobile ? "1일 후에" : "1일 후에 보기";
+    ? '빠른 접속이 가능해요'
+    : '플랜더플레이를 홈 화면에 추가하고 더 빠르게 접속하세요!';
+  const installLabel = isMobile ? '추가' : '추가하기';
+  const dismissLabel = isMobile ? '1일 후에' : '1일 후에 보기';
 
   return (
     <div
@@ -61,8 +61,8 @@ function PromptContent({ variant, onInstall, onDismiss }: PromptContentProps) {
       aria-describedby={descId}
       className={
         isMobile
-          ? "fixed inset-x-4 top-4 z-50 rounded-lg bg-white p-4 shadow-2xl sm:hidden"
-          : "fixed top-4 left-1/2 z-50 hidden max-w-sm -translate-x-1/2 rounded-lg bg-white p-6 shadow-2xl sm:block"
+          ? 'fixed inset-x-4 top-4 z-50 rounded-lg bg-white p-4 shadow-2xl sm:hidden'
+          : 'fixed top-4 left-1/2 z-50 hidden max-w-sm -translate-x-1/2 rounded-lg bg-white p-6 shadow-2xl sm:block'
       }
     >
       {isMobile ? (
@@ -192,10 +192,10 @@ export function PWAInstallPrompt() {
       }, 10000);
     };
 
-    window.addEventListener("beforeinstallprompt", handler);
+    window.addEventListener('beforeinstallprompt', handler);
 
     return () => {
-      window.removeEventListener("beforeinstallprompt", handler);
+      window.removeEventListener('beforeinstallprompt', handler);
       if (timeoutIdRef.current) {
         clearTimeout(timeoutIdRef.current);
       }
@@ -212,14 +212,13 @@ export function PWAInstallPrompt() {
       // 사용자 선택 대기
       const { outcome } = await deferredPrompt.userChoice;
 
-
       // 수락한 경우 localStorage에 기록 (다시 프롬프트 표시하지 않기 위해)
-      if (outcome === "accepted") {
+      if (outcome === 'accepted') {
         try {
-          localStorage.setItem("pwa-prompt-accepted", "true");
+          localStorage.setItem('pwa-prompt-accepted', 'true');
         } catch (error) {
-          if (process.env.NODE_ENV === "development") {
-            console.warn("localStorage access failed:", error);
+          if (process.env.NODE_ENV === 'development') {
+            console.warn('localStorage access failed:', error);
           }
         }
       }
@@ -229,8 +228,8 @@ export function PWAInstallPrompt() {
       setShowPrompt(false);
     } catch (error) {
       // 에러 발생 시 프롬프트 닫기
-      if (process.env.NODE_ENV === "development") {
-        console.error("PWA install prompt error:", error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('PWA install prompt error:', error);
       }
       setShowPrompt(false);
     }
@@ -239,11 +238,11 @@ export function PWAInstallPrompt() {
   const handleDismiss = useCallback(() => {
     // 현재 시간을 localStorage에 저장
     try {
-      localStorage.setItem("pwa-prompt-dismissed", Date.now().toString());
+      localStorage.setItem('pwa-prompt-dismissed', Date.now().toString());
     } catch (error) {
       // localStorage 접근 실패 시 (시크릿 모드, 쿼터 초과 등) 무시
-      if (process.env.NODE_ENV === "development") {
-        console.warn("localStorage access failed:", error);
+      if (process.env.NODE_ENV === 'development') {
+        console.warn('localStorage access failed:', error);
       }
     }
     setShowPrompt(false);
@@ -252,15 +251,15 @@ export function PWAInstallPrompt() {
   // ESC 키로 닫기
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
+      if (e.key === 'Escape') {
         handleDismiss();
       }
     };
 
     if (showPrompt) {
-      window.addEventListener("keydown", handleKeyDown);
+      window.addEventListener('keydown', handleKeyDown);
       return () => {
-        window.removeEventListener("keydown", handleKeyDown);
+        window.removeEventListener('keydown', handleKeyDown);
       };
     }
   }, [showPrompt, handleDismiss]);

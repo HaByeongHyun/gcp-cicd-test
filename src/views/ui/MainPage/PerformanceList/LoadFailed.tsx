@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo } from 'react';
 
 const LoadFailed = ({ error }: { error: Error }) => {
   return (
@@ -8,7 +8,7 @@ const LoadFailed = ({ error }: { error: Error }) => {
           공연 정보를 불러오는데 실패했습니다
         </h3>
         <p className="text-gray-600">
-          {error instanceof Error ? error.message : "잠시 후 다시 시도해주세요"}
+          {error instanceof Error ? error.message : '잠시 후 다시 시도해주세요'}
         </p>
       </div>
     </div>

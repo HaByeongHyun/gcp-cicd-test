@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from 'next/link';
 
 const Footer = () => {
   return (
@@ -27,7 +27,9 @@ const Footer = () => {
           {/* 저작권 및 출처 */}
           <div className="text-center text-xs text-gray-500">
             <p>Data provided by KOPIS (공연예술통합전산망)</p>
-            <p className="mt-1">© {new Date().getFullYear()} 플랜더플레이. All rights reserved.</p>
+            <p className="mt-1">
+              © {new Date().getFullYear()} 플랜더플레이. All rights reserved.
+            </p>
           </div>
         </div>
       </div>
