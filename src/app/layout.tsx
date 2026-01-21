@@ -91,12 +91,16 @@ export default function RootLayout({
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4208170150303299"
           crossOrigin="anonymous"
           strategy="afterInteractive"
+          onLoad={() => {
+            try {
+              ((window as unknown as { adsbygoogle: unknown[] }).adsbygoogle =
+                (window as unknown as { adsbygoogle: unknown[] }).adsbygoogle ||
+                []).push({});
+            } catch (e) {
+              console.error("AdSense initialization error:", e);
+            }
+          }}
         />
-        <Script id="adsense-init" strategy="afterInteractive">
-          {`
-            (adsbygoogle = window.adsbygoogle || []).push({});
-          `}
-        </Script>
         {/* <ScrollToTop /> */}
       </body>
     </html>
