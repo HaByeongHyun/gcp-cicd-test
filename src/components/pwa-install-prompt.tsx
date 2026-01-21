@@ -212,10 +212,6 @@ export function PWAInstallPrompt() {
       // 사용자 선택 대기
       const { outcome } = await deferredPrompt.userChoice;
 
-      // 개발 환경에서만 로그 출력
-      if (process.env.NODE_ENV === "development") {
-        console.log(`User response: ${outcome}`);
-      }
 
       // 수락한 경우 localStorage에 기록 (다시 프롬프트 표시하지 않기 위해)
       if (outcome === "accepted") {

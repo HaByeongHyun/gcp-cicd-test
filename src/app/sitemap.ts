@@ -2,8 +2,10 @@ import { xmlToJson } from "@/shared/lib";
 import { Performance, PerformanceApiResponse } from "@/shared/model";
 import type { MetadataRoute } from "next";
 
-const API_URL = process.env.PERFORMANCE_API_URL;
-const API_KEY = process.env.PERFORMANCE_API_KEY;
+import { env } from "@/env";
+
+const API_URL = env.PERFORMANCE_API_URL;
+const API_KEY = env.PERFORMANCE_API_KEY;
 
 // 오늘 날짜를 YYYYMMDD 형식으로 반환
 function getTodayString(): string {

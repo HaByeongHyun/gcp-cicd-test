@@ -1,3 +1,4 @@
+import { env } from "@/env";
 import { xmlToJson } from "@/shared/lib";
 import {
   Performance,
@@ -6,8 +7,8 @@ import {
   PerformanceDetailApiResponse,
 } from "@/shared/model";
 
-const API_URL = process.env.PERFORMANCE_API_URL;
-const API_KEY = process.env.PERFORMANCE_API_KEY;
+const API_URL = env.PERFORMANCE_API_URL;
+const API_KEY = env.PERFORMANCE_API_KEY;
 
 export class PerformanceApiError extends Error {
   constructor(
@@ -16,12 +17,6 @@ export class PerformanceApiError extends Error {
   ) {
     super(message);
     this.name = "PerformanceApiError";
-  }
-}
-
-function validateApiConfig(): void {
-  if (!API_URL || !API_KEY) {
-    throw new PerformanceApiError("API 설정이 올바르지 않습니다.");
   }
 }
 
@@ -46,8 +41,6 @@ export interface PerformanceListOptions {
 export async function fetchPerformanceList(
   options: PerformanceListOptions,
 ): Promise<Performance[]> {
-  validateApiConfig();
-
   const {
     page,
     perPage,
@@ -61,7 +54,7 @@ export async function fetchPerformanceList(
   } = options;
 
   const params = new URLSearchParams({
-    service: API_KEY!,
+    service: API_KEY,
     stdate,
     eddate,
     cpage: page.toString(),
@@ -102,7 +95,6 @@ export async function fetchPerformanceDetail(
   id: string,
   revalidate = 3600,
 ): Promise<PerformanceDetail> {
-  validateApiConfig();
   validatePerformanceId(id);
 
   const res = await fetch(`${API_URL}/pblprfr/${id}?service=${API_KEY}`, {
