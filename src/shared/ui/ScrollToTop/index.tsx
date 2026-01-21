@@ -7,11 +7,9 @@ export function ScrollToTop() {
   const [isVisible, setIsVisible] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [currentUrl, setCurrentUrl] = useState("");
+  const [shareUrl, setShareUrl] = useState("");
 
   useEffect(() => {
-    setCurrentUrl(window.location.href);
-
     const toggleVisibility = () => {
       if (window.scrollY > 100) {
         setIsVisible(true);
@@ -27,16 +25,6 @@ export function ScrollToTop() {
     };
   }, []);
 
-  // URL 변경 감지
-  useEffect(() => {
-    const handleUrlChange = () => {
-      setCurrentUrl(window.location.href);
-    };
-
-    window.addEventListener("popstate", handleUrlChange);
-    return () => window.removeEventListener("popstate", handleUrlChange);
-  }, []);
-
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
@@ -45,14 +33,14 @@ export function ScrollToTop() {
   };
 
   const handleShare = () => {
-    setCurrentUrl(window.location.href);
+    setShareUrl(window.location.href);
     setShowShareModal(true);
     setCopied(false);
   };
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(currentUrl);
+      await navigator.clipboard.writeText(shareUrl);
       setCopied(true);
       setTimeout(() => {
         setCopied(false);
@@ -60,7 +48,7 @@ export function ScrollToTop() {
     } catch {
       // 폴백: 구형 브라우저 지원
       const textArea = document.createElement("textarea");
-      textArea.value = currentUrl;
+      textArea.value = shareUrl;
       document.body.appendChild(textArea);
       textArea.select();
       document.execCommand("copy");
@@ -134,7 +122,7 @@ export function ScrollToTop() {
               <div className="flex gap-2">
                 <input
                   type="text"
-                  value={currentUrl}
+                  value={shareUrl}
                   readOnly
                   className="flex-1 rounded-lg border border-gray-300 bg-gray-50 px-4 py-3 text-sm text-gray-700 focus:outline-none"
                 />
