@@ -66,6 +66,8 @@ jobs:
         run: pnpm build
         env:
           NODE_ENV: production
+          PERFORMANCE_API_URL: ${{ secrets.PERFORMANCE_API_URL }}
+          PERFORMANCE_API_KEY: ${{ secrets.PERFORMANCE_API_KEY }}
 
       - name: Check build output
         run: |
