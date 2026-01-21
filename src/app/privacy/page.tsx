@@ -1,3 +1,3 @@
-import PrivacyPage from "@/views/ui/privacy";
+import PrivacyPage from '@/views/ui/privacy';
 
 export default PrivacyPage;

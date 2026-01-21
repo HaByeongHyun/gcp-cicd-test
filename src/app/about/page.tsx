@@ -1,3 +1,3 @@
-import AboutPage from "@/views/ui/about";
+import AboutPage from '@/views/ui/about';
 
 export default AboutPage;

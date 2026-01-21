@@ -5,8 +5,8 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "@/components/ui/pagination";
-import { memo } from "react";
+} from '@/components/ui/pagination';
+import { memo } from 'react';
 
 const PerformancePagination = memo(
   ({
@@ -20,7 +20,7 @@ const PerformancePagination = memo(
   }) => {
     const createPageUrl = (pageNum: number) => {
       const params = new URLSearchParams(searchParams);
-      params.set("page", pageNum.toString());
+      params.set('page', pageNum.toString());
       return `?${params.toString()}`;
     };
 
@@ -40,18 +40,18 @@ const PerformancePagination = memo(
             {/* 이전 페이지 버튼 */}
             <PaginationItem>
               <PaginationPrevious
-                href={page > 1 ? createPageUrl(page - 1) : "#"}
+                href={page > 1 ? createPageUrl(page - 1) : '#'}
                 aria-disabled={page <= 1}
-                className={page <= 1 ? "pointer-events-none opacity-50" : ""}
+                className={page <= 1 ? 'pointer-events-none opacity-50' : ''}
               />
             </PaginationItem>
 
             {/* 다음 페이지 버튼 */}
             <PaginationItem>
               <PaginationNext
-                href={hasNextPage ? createPageUrl(page + 1) : "#"}
+                href={hasNextPage ? createPageUrl(page + 1) : '#'}
                 aria-disabled={!hasNextPage}
-                className={!hasNextPage ? "pointer-events-none opacity-50" : ""}
+                className={!hasNextPage ? 'pointer-events-none opacity-50' : ''}
               />
             </PaginationItem>
           </PaginationContent>
@@ -63,4 +63,4 @@ const PerformancePagination = memo(
 
 export default PerformancePagination;
 
-PerformancePagination.displayName = "PerformancePagination";
+PerformancePagination.displayName = 'PerformancePagination';

@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import { ArrowUp, Check, Link2, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { ArrowUp, Check, Link2, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 export function ScrollToTop() {
   const [isVisible, setIsVisible] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [shareUrl, setShareUrl] = useState("");
+  const [shareUrl, setShareUrl] = useState('');
 
   useEffect(() => {
     const toggleVisibility = () => {
@@ -18,17 +18,17 @@ export function ScrollToTop() {
       }
     };
 
-    window.addEventListener("scroll", toggleVisibility);
+    window.addEventListener('scroll', toggleVisibility);
 
     return () => {
-      window.removeEventListener("scroll", toggleVisibility);
+      window.removeEventListener('scroll', toggleVisibility);
     };
   }, []);
 
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
-      behavior: "smooth",
+      behavior: 'smooth',
     });
   };
 
@@ -47,11 +47,11 @@ export function ScrollToTop() {
       }, 2000);
     } catch {
       // 폴백: 구형 브라우저 지원
-      const textArea = document.createElement("textarea");
+      const textArea = document.createElement('textarea');
       textArea.value = shareUrl;
       document.body.appendChild(textArea);
       textArea.select();
-      document.execCommand("copy");
+      document.execCommand('copy');
       document.body.removeChild(textArea);
       setCopied(true);
       setTimeout(() => {
@@ -70,13 +70,13 @@ export function ScrollToTop() {
       {/* 플로팅 버튼 컨테이너 */}
       <div
         className={`fixed right-6 bottom-6 z-50 flex flex-col gap-3 transition-all duration-300 ${
-          isVisible ? "translate-y-0 opacity-100" : "translate-y-16 opacity-0"
+          isVisible ? 'translate-y-0 opacity-100' : 'translate-y-16 opacity-0'
         }`}
       >
         {/* 공유하기 버튼 */}
         <button
           onClick={handleShare}
-          className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-white text-gray-700 shadow-lg transition-all duration-300 hover:bg-gray-50 hover:shadow-xl border border-gray-200"
+          className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-full border border-gray-200 bg-white text-gray-700 shadow-lg transition-all duration-300 hover:bg-gray-50 hover:shadow-xl"
           aria-label="공유하기"
         >
           <Link2 className="h-5 w-5" />
@@ -130,8 +130,8 @@ export function ScrollToTop() {
                   onClick={handleCopy}
                   className={`flex min-w-[80px] items-center justify-center gap-2 rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200 ${
                     copied
-                      ? "bg-green-500 text-white"
-                      : "bg-primary text-white hover:bg-primary/90"
+                      ? 'bg-green-500 text-white'
+                      : 'bg-primary hover:bg-primary/90 text-white'
                   }`}
                 >
                   {copied ? (
@@ -140,7 +140,7 @@ export function ScrollToTop() {
                       완료
                     </>
                   ) : (
-                    "복사"
+                    '복사'
                   )}
                 </button>
               </div>

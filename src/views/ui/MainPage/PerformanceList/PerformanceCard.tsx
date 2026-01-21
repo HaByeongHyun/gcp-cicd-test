@@ -4,11 +4,11 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Performance } from "@/shared/model";
-import Image from "next/image";
-import Link from "next/link";
-import { memo } from "react";
+} from '@/components/ui/card';
+import { Performance } from '@/shared/model';
+import Image from 'next/image';
+import Link from 'next/link';
+import { memo } from 'react';
 
 const PerformanceCard = ({ performance }: { performance: Performance }) => {
   return (
@@ -28,7 +28,7 @@ const PerformanceCard = ({ performance }: { performance: Performance }) => {
               <span className="text-gray-400">No Image</span>
             </div>
           )}
-          {performance.openrun === "Y" && (
+          {performance.openrun === 'Y' && (
             <div className="absolute top-2 right-2 rounded bg-red-500 px-2 py-1 text-xs font-semibold text-white">
               오픈런
             </div>
@@ -84,6 +84,6 @@ const PerformanceCard = ({ performance }: { performance: Performance }) => {
   );
 };
 
-PerformanceCard.displayName = "PerformanceCard";
+PerformanceCard.displayName = 'PerformanceCard';
 
 export default memo(PerformanceCard);

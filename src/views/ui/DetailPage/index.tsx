@@ -1,48 +1,50 @@
-import { fetchPerformanceDetail } from "@/shared/api";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { sanitizeText } from "@/shared/lib";
-import { PerformanceDetail } from "@/shared/model";
-import { ChevronLeft } from "lucide-react";
-import type { Metadata } from "next";
-import Link from "next/link";
-import { IntroImage, PerformanceImage } from "./PerformanceImage";
+import { fetchPerformanceDetail } from '@/shared/api';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { sanitizeText } from '@/shared/lib';
+import { PerformanceDetail } from '@/shared/model';
+import { ChevronLeft } from 'lucide-react';
+import type { Metadata } from 'next';
+import Link from 'next/link';
+import { IntroImage, PerformanceImage } from './PerformanceImage';
 
 // 날짜 형식 변환 (YYYY.MM.DD -> YYYY-MM-DD)
 function formatDateToISO(dateStr: string): string {
-  if (!dateStr) return "";
-  return dateStr.replace(/\./g, "-");
+  if (!dateStr) return '';
+  return dateStr.replace(/\./g, '-');
 }
 
 // JSON-LD 구조화 데이터 생성
 function generateJsonLd(performance: PerformanceDetail) {
   return {
-    "@context": "https://schema.org",
-    "@type": "Event",
+    '@context': 'https://schema.org',
+    '@type': 'Event',
     name: performance.prfnm,
     startDate: formatDateToISO(performance.prfpdfrom),
     endDate: formatDateToISO(performance.prfpdto),
-    eventStatus: "https://schema.org/EventScheduled",
-    eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+    eventStatus: 'https://schema.org/EventScheduled',
+    eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
     location: {
-      "@type": "Place",
+      '@type': 'Place',
       name: performance.fcltynm,
       address: {
-        "@type": "PostalAddress",
-        addressCountry: "KR",
+        '@type': 'PostalAddress',
+        addressCountry: 'KR',
       },
     },
     image: performance.poster || undefined,
-    description: sanitizeText(performance.sty) || `${performance.prfnm} - ${performance.genrenm}`,
+    description:
+      sanitizeText(performance.sty) ||
+      `${performance.prfnm} - ${performance.genrenm}`,
     performer: performance.prfcast
       ? {
-          "@type": "PerformingGroup",
+          '@type': 'PerformingGroup',
           name: performance.prfcast,
         }
       : undefined,
     organizer: {
-      "@type": "Organization",
-      name: performance.entrpsnmP || "플랜더플레이",
+      '@type': 'Organization',
+      name: performance.entrpsnmP || '플랜더플레이',
     },
   };
 }
@@ -52,7 +54,7 @@ function isValidUrl(url: string): boolean {
   try {
     const parsedUrl = new URL(url);
     // http, https만 허용
-    return parsedUrl.protocol === "http:" || parsedUrl.protocol === "https:";
+    return parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:';
   } catch {
     return false;
   }
@@ -73,20 +75,20 @@ export async function generateMetadata({
       performance.prfnm,
       performance.genrenm,
       performance.fcltynm,
-      "플랜더플레이",
-      "공연",
-      "공연정보",
-      "티켓",
+      '플랜더플레이',
+      '공연',
+      '공연정보',
+      '티켓',
     ],
     openGraph: {
       title: `${performance.prfnm} - 플랜더플레이`,
       description: `${performance.genrenm} | ${performance.fcltynm}`,
       images: performance.poster ? [{ url: performance.poster }] : [],
-      type: "website",
-      locale: "ko_KR",
+      type: 'website',
+      locale: 'ko_KR',
     },
     twitter: {
-      card: "summary_large_image",
+      card: 'summary_large_image',
       title: `${performance.prfnm} - 플랜더플레이`,
       description: `${performance.genrenm} | ${performance.fcltynm}`,
       images: performance.poster ? [performance.poster] : [],
@@ -158,7 +160,7 @@ export default async function PerformanceDetailPage({
                     <span className="text-gray-400">No Image</span>
                   </div>
                 )}
-                {performance.openrun === "Y" && (
+                {performance.openrun === 'Y' && (
                   <div className="absolute top-4 right-4 z-10 rounded-lg bg-red-500 px-3 py-1.5 text-sm font-semibold text-white shadow-lg">
                     오픈런
                   </div>
@@ -173,22 +175,22 @@ export default async function PerformanceDetailPage({
             <div>
               <div className="mb-2 flex items-center gap-2">
                 <span className="bg-primary/10 text-primary rounded-full px-3 py-1 text-sm font-medium">
-                  {performance.genrenm || "-"}
+                  {performance.genrenm || '-'}
                 </span>
                 <span
                   className={`rounded-full px-3 py-1 text-sm font-medium ${
-                    performance.prfstate === "공연중"
-                      ? "bg-green-100 text-green-700"
-                      : performance.prfstate === "공연예정"
-                        ? "bg-blue-100 text-blue-700"
-                        : "bg-gray-100 text-gray-700"
+                    performance.prfstate === '공연중'
+                      ? 'bg-green-100 text-green-700'
+                      : performance.prfstate === '공연예정'
+                        ? 'bg-blue-100 text-blue-700'
+                        : 'bg-gray-100 text-gray-700'
                   }`}
                 >
-                  {performance.prfstate || "-"}
+                  {performance.prfstate || '-'}
                 </span>
               </div>
               <h1 className="text-3xl font-bold text-gray-900">
-                {performance.prfnm || "-"}
+                {performance.prfnm || '-'}
               </h1>
             </div>
 
@@ -201,14 +203,14 @@ export default async function PerformanceDetailPage({
                 <div className="grid gap-4 sm:grid-cols-2">
                   <InfoItem
                     label="공연기간"
-                    value={`${performance.prfpdfrom || "-"} ~ ${performance.prfpdto || "-"}`}
+                    value={`${performance.prfpdfrom || '-'} ~ ${performance.prfpdto || '-'}`}
                   />
                   <InfoItem label="공연장" value={performance.fcltynm} />
                   <InfoItem label="공연시간" value={performance.prfruntime} />
                   <InfoItem label="관람연령" value={performance.prfage} />
                   <InfoItem
                     label="공연시간 안내"
-                    value={performance.dtguidance || "-"}
+                    value={performance.dtguidance || '-'}
                     className="sm:col-span-2"
                   />
                 </div>
@@ -224,9 +226,9 @@ export default async function PerformanceDetailPage({
                 <InfoItem label="출연" value={performance.prfcast} />
                 <InfoItem label="제작진" value={performance.prfcrew} />
                 <InfoItem label="제작사" value={performance.entrpsnmP} />
-                <InfoItem label="기획사" value={performance.entrpsnmA || "-"} />
-                <InfoItem label="주최" value={performance.entrpsnmH || "-"} />
-                <InfoItem label="주관" value={performance.entrpsnmS || "-"} />
+                <InfoItem label="기획사" value={performance.entrpsnmA || '-'} />
+                <InfoItem label="주최" value={performance.entrpsnmH || '-'} />
+                <InfoItem label="주관" value={performance.entrpsnmS || '-'} />
               </CardContent>
             </Card>
 
@@ -246,7 +248,7 @@ export default async function PerformanceDetailPage({
                     </p>
                     <div
                       className={`grid gap-2 ${
-                        relateInfo.length > 2 ? "grid-cols-2" : "grid-cols-1"
+                        relateInfo.length > 2 ? 'grid-cols-2' : 'grid-cols-1'
                       }`}
                     >
                       {relateInfo.map(({ relatenm, relateurl }) => (
@@ -260,7 +262,7 @@ export default async function PerformanceDetailPage({
                           <Button
                             variant="outline"
                             className="w-full border-blue-200 bg-blue-50 hover:border-blue-300 hover:bg-blue-100"
-                            size={relateInfo.length > 2 ? "default" : "lg"}
+                            size={relateInfo.length > 2 ? 'default' : 'lg'}
                           >
                             {relatenm}
                           </Button>
@@ -279,7 +281,7 @@ export default async function PerformanceDetailPage({
               </CardHeader>
               <CardContent>
                 <p className="leading-relaxed whitespace-pre-wrap text-gray-700">
-                  {sanitizeText(performance.sty) || "-"}
+                  {sanitizeText(performance.sty) || '-'}
                 </p>
               </CardContent>
             </Card>
@@ -322,9 +324,9 @@ const InfoItem = ({
   return (
     <div className={className}>
       <dt className="mb-1 text-sm font-medium text-gray-500">{label}</dt>
-      <dd className="text-base text-gray-900">{value.trim() || "-"}</dd>
+      <dd className="text-base text-gray-900">{value.trim() || '-'}</dd>
     </div>
   );
 };
 
-InfoItem.displayName = "InfoItem";
+InfoItem.displayName = 'InfoItem';

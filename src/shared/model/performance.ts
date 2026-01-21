@@ -1,37 +1,37 @@
 // 공연 상태 코드
-export type PerformanceState = "01" | "02" | "03";
+export type PerformanceState = '01' | '02' | '03';
 
 // 장르 코드
 export type GenreCode =
-  | "AAAA" // 연극
-  | "BBBC" // 무용
-  | "BBBE" // 대중무용
-  | "CCCA" // 서양음악
-  | "CCCC" // 한국음악
-  | "CCCD" // 대중음악
-  | "EEEA" // 복합
-  | "EEEB" // 서커스/마술
-  | "GGGA"; // 뮤지컬
+  | 'AAAA' // 연극
+  | 'BBBC' // 무용
+  | 'BBBE' // 대중무용
+  | 'CCCA' // 서양음악
+  | 'CCCC' // 한국음악
+  | 'CCCD' // 대중음악
+  | 'EEEA' // 복합
+  | 'EEEB' // 서커스/마술
+  | 'GGGA'; // 뮤지컬
 
 // 지역(시도) 코드
 export type AreaCode =
-  | "11" // 서울
-  | "26" // 부산
-  | "27" // 대구
-  | "28" // 인천
-  | "29" // 광주
-  | "30" // 대전
-  | "31" // 울산
-  | "36" // 세종
-  | "41" // 경기
-  | "42" // 강원
-  | "43" // 충북
-  | "44" // 충남
-  | "45" // 전북
-  | "46" // 전남
-  | "47" // 경북
-  | "48" // 경남
-  | "50"; // 제주
+  | '11' // 서울
+  | '26' // 부산
+  | '27' // 대구
+  | '28' // 인천
+  | '29' // 광주
+  | '30' // 대전
+  | '31' // 울산
+  | '36' // 세종
+  | '41' // 경기
+  | '42' // 강원
+  | '43' // 충북
+  | '44' // 충남
+  | '45' // 전북
+  | '46' // 전남
+  | '47' // 경북
+  | '48' // 경남
+  | '50'; // 제주
 
 // 공연 목록 정보 (간략)
 export interface Performance {
@@ -117,9 +117,9 @@ export interface PerformanceListParams {
   prfplccd?: string; // 공연장코드 (선택)
   signgucode?: AreaCode; // 지역(시도)코드 (선택)
   signgucodesub?: string; // 지역(구군)코드 (선택)
-  kidstate?: "Y" | "N"; // 아동공연여부 (선택)
+  kidstate?: 'Y' | 'N'; // 아동공연여부 (선택)
   prfstate?: PerformanceState; // 공연상태코드 (선택)
-  openrun?: "Y" | "N"; // 오픈런여부 (선택)
+  openrun?: 'Y' | 'N'; // 오픈런여부 (선택)
   afterdate?: string; // 해당일자 이후 등록/수정된 항목만 출력 (선택)
 }
 
@@ -131,34 +131,34 @@ export interface PerformanceDetailParams {
 
 export const performanceHelpers = {
   AREA_OPTIONS: [
-    { value: "11", label: "서울" },
-    { value: "26", label: "부산" },
-    { value: "27", label: "대구" },
-    { value: "28", label: "인천" },
-    { value: "29", label: "광주" },
-    { value: "30", label: "대전" },
-    { value: "31", label: "울산" },
-    { value: "36", label: "세종" },
-    { value: "41", label: "경기" },
-    { value: "42", label: "강원" },
-    { value: "43", label: "충북" },
-    { value: "44", label: "충남" },
-    { value: "45", label: "전북" },
-    { value: "46", label: "전남" },
-    { value: "47", label: "경북" },
-    { value: "48", label: "경남" },
-    { value: "50", label: "제주" },
+    { value: '11', label: '서울' },
+    { value: '26', label: '부산' },
+    { value: '27', label: '대구' },
+    { value: '28', label: '인천' },
+    { value: '29', label: '광주' },
+    { value: '30', label: '대전' },
+    { value: '31', label: '울산' },
+    { value: '36', label: '세종' },
+    { value: '41', label: '경기' },
+    { value: '42', label: '강원' },
+    { value: '43', label: '충북' },
+    { value: '44', label: '충남' },
+    { value: '45', label: '전북' },
+    { value: '46', label: '전남' },
+    { value: '47', label: '경북' },
+    { value: '48', label: '경남' },
+    { value: '50', label: '제주' },
   ],
 
   GENRE_OPTIONS: [
-    { value: "AAAA", label: "연극" },
-    { value: "BBBC", label: "무용" },
-    { value: "BBBE", label: "대중무용" },
-    { value: "CCCA", label: "서양음악" },
-    { value: "CCCC", label: "한국음악" },
-    { value: "CCCD", label: "대중음악" },
-    { value: "EEEA", label: "복합" },
-    { value: "EEEB", label: "서커스/마술" },
-    { value: "GGGA", label: "뮤지컬" },
+    { value: 'AAAA', label: '연극' },
+    { value: 'BBBC', label: '무용' },
+    { value: 'BBBE', label: '대중무용' },
+    { value: 'CCCA', label: '서양음악' },
+    { value: 'CCCC', label: '한국음악' },
+    { value: 'CCCD', label: '대중음악' },
+    { value: 'EEEA', label: '복합' },
+    { value: 'EEEB', label: '서커스/마술' },
+    { value: 'GGGA', label: '뮤지컬' },
   ],
 };

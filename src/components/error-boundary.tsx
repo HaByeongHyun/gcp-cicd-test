@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertTriangle, RefreshCw } from "lucide-react";
-import { Component, ReactNode } from "react";
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { AlertTriangle, RefreshCw } from 'lucide-react';
+import { Component, ReactNode } from 'react';
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -29,8 +29,8 @@ export class ErrorBoundary extends Component<
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo): void {
-    if (process.env.NODE_ENV === "development") {
-      console.error("Error caught by ErrorBoundary:", error, errorInfo);
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Error caught by ErrorBoundary:', error, errorInfo);
     }
   }
 
@@ -59,9 +59,9 @@ export class ErrorBoundary extends Component<
                 <br />
                 잠시 후 다시 시도해주세요.
               </p>
-              {process.env.NODE_ENV === "development" && this.state.error && (
+              {process.env.NODE_ENV === 'development' && this.state.error && (
                 <div className="rounded-md bg-gray-100 p-3 text-left">
-                  <p className="text-xs font-mono text-gray-700">
+                  <p className="font-mono text-xs text-gray-700">
                     {this.state.error.message}
                   </p>
                 </div>
@@ -79,4 +79,3 @@ export class ErrorBoundary extends Component<
     return this.props.children;
   }
 }
-

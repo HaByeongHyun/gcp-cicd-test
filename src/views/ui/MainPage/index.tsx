@@ -1,9 +1,9 @@
-import { addWeeks, format } from "date-fns";
-import { Suspense } from "react";
-import PerformanceFilters from "./Filters";
-import MainBanner from "./MainBanner";
-import PerformanceList from "./PerformanceList";
-import SkeletonCard from "./SkeletonCard";
+import { addWeeks, format } from 'date-fns';
+import { Suspense } from 'react';
+import PerformanceFilters from './Filters';
+import MainBanner from './MainBanner';
+import PerformanceList from './PerformanceList';
+import SkeletonCard from './SkeletonCard';
 
 const MainPage = async ({
   searchParams,
@@ -14,8 +14,8 @@ const MainPage = async ({
   const page = Number(params.page) || 1;
   const perPage = Number(params.perPage) || 12;
 
-  const getDefaultStartDate = () => format(new Date(), "yyyyMMdd");
-  const getDefaultEndDate = () => format(addWeeks(new Date(), 2), "yyyyMMdd");
+  const getDefaultStartDate = () => format(new Date(), 'yyyyMMdd');
+  const getDefaultEndDate = () => format(addWeeks(new Date(), 2), 'yyyyMMdd');
 
   const stdate = params.stdate || getDefaultStartDate();
   const eddate = params.eddate || getDefaultEndDate();

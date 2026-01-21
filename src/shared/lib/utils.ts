@@ -1,6 +1,6 @@
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
-import { parseStringPromise } from "xml2js";
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+import { parseStringPromise } from 'xml2js';
 
 /**
  * Tailwind CSS 클래스 병합 유틸리티
@@ -15,7 +15,7 @@ export function cn(...inputs: ClassValue[]) {
 export const sanitizeSearchQuery = (query: string): string => {
   return query
     .trim()
-    .replace(/[<>"'&]/g, "")
+    .replace(/[<>"'&]/g, '')
     .slice(0, 100);
 };
 
@@ -23,8 +23,8 @@ export const sanitizeSearchQuery = (query: string): string => {
  * HTML 태그 제거
  */
 export const sanitizeText = (text: string): string => {
-  if (!text) return "";
-  return text.replace(/<[^>]*>/g, "").trim();
+  if (!text) return '';
+  return text.replace(/<[^>]*>/g, '').trim();
 };
 
 // XML을 JSON으로 변환

@@ -1,11 +1,11 @@
-import { env } from "@/env";
-import { xmlToJson } from "@/shared/lib";
+import { env } from '@/env';
+import { xmlToJson } from '@/shared/lib';
 import {
   Performance,
   PerformanceApiResponse,
   PerformanceDetail,
   PerformanceDetailApiResponse,
-} from "@/shared/model";
+} from '@/shared/model';
 
 const API_URL = env.PERFORMANCE_API_URL;
 const API_KEY = env.PERFORMANCE_API_KEY;
@@ -16,13 +16,13 @@ export class PerformanceApiError extends Error {
     public statusCode?: number,
   ) {
     super(message);
-    this.name = "PerformanceApiError";
+    this.name = 'PerformanceApiError';
   }
 }
 
 function validatePerformanceId(id: string): void {
   if (!/^[A-Za-z0-9]{1,50}$/.test(id)) {
-    throw new PerformanceApiError("올바르지 않은 공연 ID입니다.");
+    throw new PerformanceApiError('올바르지 않은 공연 ID입니다.');
   }
 }
 
@@ -49,7 +49,7 @@ export async function fetchPerformanceList(
     area,
     genre,
     search,
-    prfstate = "02",
+    prfstate = '02',
     revalidate = 600,
   } = options;
 
@@ -62,9 +62,9 @@ export async function fetchPerformanceList(
     prfstate,
   });
 
-  if (area) params.append("signgucode", area);
-  if (genre) params.append("shcate", genre);
-  if (search) params.append("shprfnm", search);
+  if (area) params.append('signgucode', area);
+  if (genre) params.append('shcate', genre);
+  if (search) params.append('shprfnm', search);
 
   const res = await fetch(`${API_URL}/pblprfr?${params.toString()}`, {
     next: { revalidate },
@@ -81,7 +81,7 @@ export async function fetchPerformanceList(
   const jsonData = await xmlToJson<PerformanceApiResponse>(xmlData);
 
   if (!jsonData?.dbs) {
-    throw new PerformanceApiError("API 응답 형식이 올바르지 않습니다.");
+    throw new PerformanceApiError('API 응답 형식이 올바르지 않습니다.');
   }
 
   return Array.isArray(jsonData.dbs.db)
@@ -112,7 +112,7 @@ export async function fetchPerformanceDetail(
   const jsonData = await xmlToJson<PerformanceDetailApiResponse>(xmlData);
 
   if (!jsonData?.dbs?.db) {
-    throw new PerformanceApiError("공연 정보가 올바르지 않은 형식입니다.");
+    throw new PerformanceApiError('공연 정보가 올바르지 않은 형식입니다.');
   }
 
   return jsonData.dbs.db;

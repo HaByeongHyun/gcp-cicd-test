@@ -1,33 +1,33 @@
-"use client";
+'use client';
 
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import { Input } from "@/components/ui/input";
+} from '@/components/ui/accordion';
+import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
+import { Input } from '@/components/ui/input';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from '@/components/ui/popover';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { sanitizeSearchQuery } from "@/shared/lib";
-import { performanceHelpers } from "@/shared/model";
-import { addWeeks, format } from "date-fns";
-import { ko } from "date-fns/locale";
-import { CalendarIcon, Search, X } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+} from '@/components/ui/select';
+import { sanitizeSearchQuery } from '@/shared/lib';
+import { performanceHelpers } from '@/shared/model';
+import { addWeeks, format } from 'date-fns';
+import { ko } from 'date-fns/locale';
+import { CalendarIcon, Search, X } from 'lucide-react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 function PerformanceFilters() {
   const router = useRouter();
@@ -66,8 +66,8 @@ function PerformanceFilters() {
   }, []);
 
   const formatDateToString = useCallback((date: Date | undefined) => {
-    if (!date) return "";
-    return format(date, "yyyyMMdd");
+    if (!date) return '';
+    return format(date, 'yyyyMMdd');
   }, []);
 
   const getDefaultStartDate = useCallback(() => {
@@ -79,11 +79,11 @@ function PerformanceFilters() {
   }, []);
 
   const [startDate, setStartDate] = useState<Date | undefined>(() => {
-    const paramDate = searchParams?.get("stdate");
+    const paramDate = searchParams?.get('stdate');
     return paramDate ? parseDate(paramDate) : getDefaultStartDate();
   });
   const [endDate, setEndDate] = useState<Date | undefined>(() => {
-    const paramDate = searchParams?.get("eddate");
+    const paramDate = searchParams?.get('eddate');
     return paramDate ? parseDate(paramDate) : getDefaultEndDate();
   });
 
@@ -94,7 +94,7 @@ function PerformanceFilters() {
       },
       {
         threshold: [1],
-        rootMargin: "-1px 0px 0px 0px",
+        rootMargin: '-1px 0px 0px 0px',
       },
     );
 
@@ -110,13 +110,13 @@ function PerformanceFilters() {
     };
   }, []);
   const [area, setArea] = useState<string | undefined>(
-    searchParams?.get("area") || undefined,
+    searchParams?.get('area') || undefined,
   );
   const [genre, setGenre] = useState<string | undefined>(
-    searchParams?.get("genre") || undefined,
+    searchParams?.get('genre') || undefined,
   );
   const [searchQuery, setSearchQuery] = useState(
-    searchParams?.get("search") || "",
+    searchParams?.get('search') || '',
   );
 
   const handleApplyFilters = useCallback(() => {
@@ -126,34 +126,34 @@ function PerformanceFilters() {
     const endDateStr = formatDateToString(endDate);
 
     if (startDateStr) {
-      params.set("stdate", startDateStr);
+      params.set('stdate', startDateStr);
     }
     if (endDateStr) {
-      params.set("eddate", endDateStr);
+      params.set('eddate', endDateStr);
     }
 
     if (area) {
-      params.set("area", area);
+      params.set('area', area);
     } else {
-      params.delete("area");
+      params.delete('area');
     }
 
     if (genre) {
-      params.set("genre", genre);
+      params.set('genre', genre);
     } else {
-      params.delete("genre");
+      params.delete('genre');
     }
 
     // 검색어 sanitization (XSS 방지)
     const sanitizedSearch = sanitizeSearchQuery(searchQuery);
 
     if (sanitizedSearch) {
-      params.set("search", sanitizedSearch);
+      params.set('search', sanitizedSearch);
     } else {
-      params.delete("search");
+      params.delete('search');
     }
 
-    params.set("page", "1");
+    params.set('page', '1');
 
     router.push(`?${params.toString()}`);
   }, [
@@ -172,15 +172,15 @@ function PerformanceFilters() {
     setEndDate(getDefaultEndDate());
     setArea(undefined);
     setGenre(undefined);
-    setSearchQuery("");
+    setSearchQuery('');
 
     const params = new URLSearchParams(searchParams?.toString());
-    params.delete("stdate");
-    params.delete("eddate");
-    params.delete("area");
-    params.delete("genre");
-    params.delete("search");
-    params.set("page", "1");
+    params.delete('stdate');
+    params.delete('eddate');
+    params.delete('area');
+    params.delete('genre');
+    params.delete('search');
+    params.set('page', '1');
 
     router.push(`?${params.toString()}`);
   }, [getDefaultStartDate, getDefaultEndDate, searchParams, router]);
@@ -194,7 +194,7 @@ function PerformanceFilters() {
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === "Enter") {
+      if (e.key === 'Enter') {
         handleApplyFilters();
       }
     },
@@ -270,7 +270,7 @@ function PerformanceFilters() {
     <div
       ref={filterRef}
       className={`sticky top-0 z-50 mb-6 rounded-lg border bg-white p-4 transition-all duration-300 ${
-        isSticky ? "bg-white/95 shadow-lg backdrop-blur-sm" : "shadow-sm"
+        isSticky ? 'bg-white/95 shadow-lg backdrop-blur-sm' : 'shadow-sm'
       }`}
     >
       <Accordion type="single" collapsible>
@@ -300,7 +300,7 @@ function PerformanceFilters() {
                     >
                       <CalendarIcon className="mr-2 size-4" />
                       {startDate ? (
-                        format(startDate, "yyyy년 MM월 dd일", { locale: ko })
+                        format(startDate, 'yyyy년 MM월 dd일', { locale: ko })
                       ) : (
                         <span>날짜 선택</span>
                       )}
@@ -331,7 +331,7 @@ function PerformanceFilters() {
                     >
                       <CalendarIcon className="mr-2 size-4" />
                       {endDate ? (
-                        format(endDate, "yyyy년 MM월 dd일", { locale: ko })
+                        format(endDate, 'yyyy년 MM월 dd일', { locale: ko })
                       ) : (
                         <span>날짜 선택</span>
                       )}
