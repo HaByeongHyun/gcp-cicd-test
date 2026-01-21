@@ -9,7 +9,7 @@ export const AdSense = () => {
         className="adsbygoogle"
         style={{ display: "block" }}
         data-ad-client="ca-pub-4208170150303299"
-        data-ad-slot="9493566731"
+        data-ad-slot="3387323384"
         data-ad-format="auto"
         data-full-width-responsive="true"
       />
