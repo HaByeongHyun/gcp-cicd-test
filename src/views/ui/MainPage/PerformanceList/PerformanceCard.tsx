@@ -84,6 +84,6 @@ const PerformanceCard = ({ performance }: { performance: Performance }) => {
   );
 };
 
-export default memo(PerformanceCard);
-
 PerformanceCard.displayName = "PerformanceCard";
+
+export default memo(PerformanceCard);

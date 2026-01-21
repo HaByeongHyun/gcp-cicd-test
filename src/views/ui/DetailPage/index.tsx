@@ -1,10 +1,8 @@
+import { fetchPerformanceDetail } from "@/shared/api";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { sanitizeText, xmlToJson } from "@/shared/lib";
-import {
-  PerformanceDetail,
-  PerformanceDetailApiResponse,
-} from "@/shared/model";
+import { sanitizeText } from "@/shared/lib";
+import { PerformanceDetail } from "@/shared/model";
 import { ChevronLeft } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -49,9 +47,6 @@ function generateJsonLd(performance: PerformanceDetail) {
   };
 }
 
-const API_URL = process.env.PERFORMANCE_API_URL;
-const API_KEY = process.env.PERFORMANCE_API_KEY;
-
 // URL 검증 함수 (보안: javascript:, data: 등 악의적인 URL 차단)
 function isValidUrl(url: string): boolean {
   try {
@@ -63,58 +58,13 @@ function isValidUrl(url: string): boolean {
   }
 }
 
-async function getPerformanceDetail(id: string): Promise<PerformanceDetail> {
-  // 환경 변수 검증
-  if (!API_URL || !API_KEY) {
-    throw new Error(
-      "공연 API 설정이 올바르지 않습니다. 환경 변수를 확인해주세요.",
-    );
-  }
-
-  // ID 파라미터 검증 (영문자와 숫자만 허용)
-  if (!/^[A-Za-z0-9]{1,50}$/.test(id)) {
-    throw new Error("올바르지 않은 공연 ID입니다.");
-  }
-
-  try {
-    const res = await fetch(`${API_URL}/pblprfr/${id}?service=${API_KEY}`, {
-      next: { revalidate: 3600 },
-    });
-
-    // API 요청 에러 처리
-    if (!res.ok) {
-      throw new Error(
-        `공연 상세 정보를 불러오는데 실패했습니다. (상태 코드: ${res.status})`,
-      );
-    }
-
-    const xmlData = await res.text();
-
-    // XML을 JSON으로 변환
-    const jsonData = await xmlToJson<PerformanceDetailApiResponse>(xmlData);
-
-    // API 응답 구조 검증
-    if (!jsonData?.dbs?.db) {
-      throw new Error("공연 정보가 올바르지 않은 형식입니다.");
-    }
-
-    return jsonData.dbs.db;
-  } catch (error) {
-    throw new Error(
-      error instanceof Error
-        ? error.message
-        : "알 수 없는 오류가 발생했습니다.",
-    );
-  }
-}
-
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const performance = await getPerformanceDetail(id);
+  const performance = await fetchPerformanceDetail(id);
 
   return {
     title: performance.prfnm,
@@ -150,7 +100,7 @@ export default async function PerformanceDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const performance = await getPerformanceDetail(id);
+  const performance = await fetchPerformanceDetail(id);
 
   // 예약 링크 배열 처리 및 URL 검증 (보안)
   const relateInfo = (

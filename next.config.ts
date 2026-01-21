@@ -36,10 +36,31 @@ const nextConfig: NextConfig = {
     ];
   },
   async headers() {
+    // CSP 정책 (AdSense, Google Analytics, KOPIS API 허용)
+    const cspDirectives = [
+      "default-src 'self'",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://pagead2.googlesyndication.com https://www.googletagservices.com https://www.google-analytics.com https://adservice.google.com",
+      "style-src 'self' 'unsafe-inline'",
+      "img-src 'self' data: blob: https://www.kopis.or.kr https://pagead2.googlesyndication.com https://www.google-analytics.com https://*.googleusercontent.com",
+      "font-src 'self' data:",
+      "connect-src 'self' https://www.kopis.or.kr https://pagead2.googlesyndication.com https://www.google-analytics.com",
+      "frame-src 'self' https://googleads.g.doubleclick.net https://www.google.com https://tpc.googlesyndication.com",
+      "object-src 'none'",
+      "base-uri 'self'",
+      "form-action 'self'",
+      "frame-ancestors 'self'",
+      "upgrade-insecure-requests",
+    ].join("; ");
+
     return [
       {
         source: "/:path*",
         headers: [
+          // Content Security Policy
+          {
+            key: "Content-Security-Policy",
+            value: cspDirectives,
+          },
           // MIME 타입 스니핑 방지
           {
             key: "X-Content-Type-Options",

@@ -61,7 +61,7 @@ interface IntroImageProps {
   height?: number;
 }
 
-export const IntroImage = memo(({ src, alt, width = 0, height = 0 }: IntroImageProps) => {
+export const IntroImage = memo(({ src, alt, width = 600, height = 400 }: IntroImageProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
 
