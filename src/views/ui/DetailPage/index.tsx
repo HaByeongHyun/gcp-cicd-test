@@ -10,6 +10,45 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { IntroImage, PerformanceImage } from "./PerformanceImage";
 
+// 날짜 형식 변환 (YYYY.MM.DD -> YYYY-MM-DD)
+function formatDateToISO(dateStr: string): string {
+  if (!dateStr) return "";
+  return dateStr.replace(/\./g, "-");
+}
+
+// JSON-LD 구조화 데이터 생성
+function generateJsonLd(performance: PerformanceDetail) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Event",
+    name: performance.prfnm,
+    startDate: formatDateToISO(performance.prfpdfrom),
+    endDate: formatDateToISO(performance.prfpdto),
+    eventStatus: "https://schema.org/EventScheduled",
+    eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+    location: {
+      "@type": "Place",
+      name: performance.fcltynm,
+      address: {
+        "@type": "PostalAddress",
+        addressCountry: "KR",
+      },
+    },
+    image: performance.poster || undefined,
+    description: sanitizeText(performance.sty) || `${performance.prfnm} - ${performance.genrenm}`,
+    performer: performance.prfcast
+      ? {
+          "@type": "PerformingGroup",
+          name: performance.prfcast,
+        }
+      : undefined,
+    organizer: {
+      "@type": "Organization",
+      name: performance.entrpsnmP || "플랜더플레이",
+    },
+  };
+}
+
 const API_URL = process.env.PERFORMANCE_API_URL;
 const API_KEY = process.env.PERFORMANCE_API_KEY;
 
@@ -129,8 +168,16 @@ export default async function PerformanceDetailPage({
       : [performance.styurls.styurl]
     : [];
 
+  const jsonLd = generateJsonLd(performance);
+
   return (
     <div className="min-h-screen bg-linear-to-b from-gray-50 to-white">
+      {/* JSON-LD 구조화 데이터 */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
       {/* 헤더 */}
       <div className="border-b bg-white">
         <div className="mx-auto max-w-7xl px-4 py-6">
