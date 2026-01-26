@@ -61,8 +61,8 @@ function PromptContent({ variant, onInstall, onDismiss }: PromptContentProps) {
       aria-describedby={descId}
       className={
         isMobile
-          ? 'fixed inset-x-4 top-4 z-50 rounded-lg bg-white p-4 shadow-2xl sm:hidden'
-          : 'fixed top-4 left-1/2 z-50 hidden max-w-sm -translate-x-1/2 rounded-lg bg-white p-6 shadow-2xl sm:block'
+          ? 'fixed inset-x-4 top-4 z-9999 rounded-lg bg-white p-4 shadow-2xl sm:hidden'
+          : 'fixed top-4 left-1/2 z-9999 hidden max-w-sm -translate-x-1/2 rounded-lg bg-white p-6 shadow-2xl sm:block'
       }
     >
       {isMobile ? (
